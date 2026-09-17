@@ -1,1795 +1,647 @@
 <template>
-  <div class="website">
-    <!-- 导航栏 -->
-    <header :class="['navbar', { scrolled: isScrolled }]">
+  <div ref="siteShell" class="site-shell">
+    <header class="site-header">
       <div class="nav-container">
-        <div class="logo" @click="scrollTo('home')">
-          <img src="./assets/logo.png" alt="Gin Layout" class="logo-img" />
-          <span class="logo-text">Gin Layout</span>
-        </div>
-        
-        <nav class="nav-links desktop-nav">
-          <a @click="scrollTo('features')" class="nav-link">特性</a>
-          <a @click="scrollTo('architecture')" class="nav-link">架构</a>
-          <a @click="scrollTo('quickstart')" class="nav-link">快速开始</a>
-          <a @click="scrollTo('demo')" class="nav-link">演示</a>
+        <a class="brand" href="#top" aria-label="Gin Layout 首页" @click="closeMenu">
+          <img class="brand-mark" src="/gin-layout-mark.svg" alt="" />
+          <span>Gin Layout</span>
+        </a>
+        <nav :class="['main-nav', { open: mobileMenuOpen }]" aria-label="主导航">
+          <a v-for="item in navItems" :key="item.id" :href="`#${item.id}`" @click="closeMenu">{{ item.label }}</a>
         </nav>
-        
-        <div class="nav-actions">
-          <!-- 主题切换按钮 -->
-          <div class="theme-switcher desktop-only">
-            <button :class="['theme-btn', { active: theme === 'light' }]" @click="setTheme('light')" title="浅色模式">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="5"/>
-                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-              </svg>
-            </button>
-            <button :class="['theme-btn', { active: theme === 'system' }]" @click="setTheme('system')" title="跟随系统">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                <path d="M8 21h8M12 17v4"/>
-              </svg>
-            </button>
-            <button :class="['theme-btn', { active: theme === 'dark' }]" @click="setTheme('dark')" title="深色模式">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              </svg>
-            </button>
-          </div>
-          
-          <a href="https://github.com/wannanbigpig/gin-layout" target="_blank" class="github-btn desktop-only">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="github-icon">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            <span>Star</span>
+        <div class="header-actions">
+          <a
+            class="github-link"
+            href="https://github.com/wannanbigpig/gin-layout"
+            target="_blank"
+            rel="noreferrer"
+            :aria-label="githubStars === null ? 'GitHub 仓库' : `GitHub 仓库，${githubStars} 个 Star`"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.69c-2.78.6-3.37-1.18-3.37-1.18-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.35 1.09 2.92.83.09-.65.35-1.09.64-1.34-2.22-.25-4.56-1.11-4.56-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02A9.6 9.6 0 0 1 12 6.8a9.6 9.6 0 0 1 2.5.34c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.75c0 .27.18.58.69.48A10 10 0 0 0 12 2Z" /></svg>
+            <span>GitHub</span>
+            <span class="github-stars" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="m12 2.8 2.83 5.74 6.33.92-4.58 4.46 1.08 6.3L12 17.25l-5.66 2.97 1.08-6.3-4.58-4.46 6.33-.92L12 2.8Z" /></svg>
+              <b>{{ formatGithubStars(githubStars) }}</b>
+            </span>
           </a>
-          <button class="mobile-menu-btn" @click="mobileMenuOpen = !mobileMenuOpen">
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
+          <a class="button button-small button-primary" href="https://x-l-admin.wannanbigpig.com" target="_blank" rel="noreferrer">在线演示</a>
+          <button class="menu-toggle" type="button" :aria-expanded="mobileMenuOpen" aria-label="切换导航" @click="mobileMenuOpen = !mobileMenuOpen"><span></span><span></span></button>
         </div>
       </div>
-      
-      <!-- 移动端菜单 -->
-      <transition name="slide">
-        <div v-if="mobileMenuOpen" class="mobile-menu">
-          <a @click="scrollTo('features'); mobileMenuOpen = false" class="mobile-nav-link">特性</a>
-          <a @click="scrollTo('architecture'); mobileMenuOpen = false" class="mobile-nav-link">架构</a>
-          <a @click="scrollTo('quickstart'); mobileMenuOpen = false" class="mobile-nav-link">快速开始</a>
-          <a @click="scrollTo('demo'); mobileMenuOpen = false" class="mobile-nav-link">演示</a>
-          <a href="https://github.com/wannanbigpig/gin-layout" target="_blank" class="mobile-nav-link github-mobile">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-            GitHub
-          </a>
-        </div>
-      </transition>
     </header>
 
-    <!-- Hero 区域 -->
-    <section id="home" class="hero">
-      <div class="hero-bg">
-        <div class="gradient-orb orb-1"></div>
-        <div class="gradient-orb orb-2"></div>
-        <div class="gradient-orb orb-3"></div>
-        <div class="grid-overlay"></div>
-      </div>
-      
-      <div class="hero-content">
-        <div class="hero-badge">
-          <span class="badge-dot"></span>
-          <span>开源项目</span>
-        </div>
-        
-        <h1 class="hero-title">
-          <span class="title-line">构建企业级</span>
-          <span class="title-line highlight">Go 后台系统</span>
-          <span class="title-line">从未如此简单</span>
-        </h1>
-        
-        <p class="hero-description">
-          Gin Layout 是一个开箱即用的 Go 语言后台管理脚手架，
-          集成用户管理、RBAC 权限、动态菜单、操作日志等核心功能，
-          让您专注于业务逻辑，快速交付高质量产品。
-        </p>
-        
-        <div class="hero-cta">
-          <button @click="scrollTo('quickstart')" class="btn btn-primary">
-            <span>开始使用</span>
-            <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </button>
-          <a href="https://github.com/wannanbigpig/gin-layout" target="_blank" class="btn btn-secondary">
-            <svg viewBox="0 0 24 24" fill="currentColor" class="btn-github">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-            <span>GitHub</span>
-          </a>
-        </div>
-        
-        <div class="hero-stats">
-          <div class="stat">
-            <div class="stat-value">10+</div>
-            <div class="stat-label">核心模块</div>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <div class="stat-value">100%</div>
-            <div class="stat-label">开源免费</div>
-          </div>
-          <div class="stat-divider"></div>
-          <div class="stat">
-            <div class="stat-value">生产级</div>
-            <div class="stat-label">代码质量</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="hero-scroll">
-        <div class="scroll-indicator"></div>
-        <span>向下滚动</span>
-      </div>
-    </section>
-
-    <!-- 特性网格 -->
-    <section id="features" class="features">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">核心特性</span>
-          <h2 class="section-title">为高效开发而生</h2>
-          <p class="section-desc">精心设计的每一个功能，都经过生产环境验证</p>
-        </div>
-        
-        <div class="features-grid">
-          <div class="feature-card" v-for="(feature, index) in features" :key="index">
-            <div class="feature-icon-wrapper">
-              <div class="feature-icon-bg"></div>
-              <el-icon :size="28" class="feature-icon"><component :is="feature.iconName" /></el-icon>
+    <main id="top">
+      <section class="hero">
+        <div class="container hero-layout">
+          <div class="hero-copy" data-reveal="left">
+            <div class="project-badge"><span>开源</span> Gin + Vue 3 后台管理系统</div>
+            <h1><span>开箱即用的</span><em>Go 后台基础设施</em></h1>
+            <p class="hero-lead">集成认证权限、动态菜单、文件中心、日志审计与任务调度。保留清晰的工程边界，让你从业务开发开始，而不是重复搭建后台底座。</p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#quickstart">快速开始<svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h11M10 5l4 4-4 4" /></svg></a>
+              <a class="button button-secondary" href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">查看源码</a>
             </div>
-            <h3 class="feature-title">{{ feature.title }}</h3>
-            <p class="feature-desc">{{ feature.description }}</p>
-            <ul class="feature-list">
-              <li v-for="item in feature.items" :key="item">{{ item }}</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 技术架构 -->
-    <section id="architecture" class="architecture">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">技术栈</span>
-          <h2 class="section-title">现代化的技术选型</h2>
-          <p class="section-desc">采用业界最佳实践，确保系统稳定高效</p>
-        </div>
-        
-        <div class="tech-showcase">
-          <div class="tech-category">
-            <h4 class="tech-category-title">后端技术</h4>
-            <div class="tech-items">
-              <div class="tech-item" v-for="tech in backendTech" :key="tech.name">
-                <div class="tech-logo" :style="{ background: tech.gradient }">
-                  <el-icon :size="24"><component :is="tech.iconName" /></el-icon>
-                </div>
-                <div class="tech-info">
-                  <span class="tech-name">{{ tech.name }}</span>
-                  <span class="tech-desc">{{ tech.desc }}</span>
-                </div>
-              </div>
+            <div class="hero-meta">
+              <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M2 10h16" /></svg>MIT License</span>
+              <span>Go 1.27+</span><span>{{ apiCatalog.length }} 个接口</span>
             </div>
           </div>
-          
-          <div class="tech-category">
-            <h4 class="tech-category-title">前端技术</h4>
-            <div class="tech-items">
-              <div class="tech-item" v-for="tech in frontendTech" :key="tech.name">
-                <div class="tech-logo" :style="{ background: tech.gradient }">
-                  <el-icon :size="24"><component :is="tech.iconName" /></el-icon>
-                </div>
-                <div class="tech-info">
-                  <span class="tech-name">{{ tech.name }}</span>
-                  <span class="tech-desc">{{ tech.desc }}</span>
-                </div>
-              </div>
+          <div class="hero-preview" data-reveal="right">
+            <div class="browser-frame">
+              <div class="browser-bar"><i></i><i></i><i></i><span>x-l-admin.wannanbigpig.com</span></div>
+              <img src="/screenshots/x-l-admin-super-admin-home.jpg" alt="X-L-Admin 超级管理员工作台截图" />
             </div>
+            <div class="preview-caption"><span>真实管理端界面</span><p>个人工作台 · 权限菜单 · 操作审计</p></div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 快速开始 -->
-    <section id="quickstart" class="quickstart">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-tag">快速开始</span>
-          <h2 class="section-title">5 分钟运行项目</h2>
-          <p class="section-desc">简单的步骤，快速上手</p>
-        </div>
-        
-        <div class="code-showcase">
-          <div class="code-tabs">
-            <button 
-              :class="['code-tab', { active: activeTab === 'backend' }]"
-              @click="activeTab = 'backend'"
-            >
-              <span class="tab-icon">🔧</span>
-              <span>后端</span>
-            </button>
-            <button 
-              :class="['code-tab', { active: activeTab === 'frontend' }]"
-              @click="activeTab = 'frontend'"
-            >
-              <span class="tab-icon">🎨</span>
-              <span>前端</span>
+      <section class="stack-strip" aria-label="技术栈" data-reveal><div class="container"><span>Gin</span><span>GORM</span><span>Casbin</span><span>MySQL</span><span>Redis</span><span>Asynq</span><span>Vue 3</span><span>Element Plus</span></div></section>
+
+      <section id="preview" class="section product-section">
+        <div class="container">
+          <div class="section-heading centered-heading" data-reveal><span class="eyebrow">PRODUCT PREVIEW</span><h2>不是概念图，是已经可以使用的管理端。</h2><p>配套 X-L-Admin 前端直接消费 Gin Layout 的菜单、权限与业务接口，覆盖后台系统最常见的操作路径。</p></div>
+          <div class="product-showcase" data-reveal>
+            <div class="showcase-stage">
+              <img ref="showcaseImage" :key="activePreviewSlide.id" :class="{ 'preview-image-hidden': isPreviewHidden(activePreviewSlide.id) }" :src="activePreviewSlide.image" :alt="activePreviewSlide.alt" />
+            </div>
+            <div class="showcase-label"><span class="status-dot"></span> X-L-Admin / {{ activePreviewSlide.label }}</div>
+          </div>
+          <div class="preview-grid" aria-label="管理端界面预览">
+            <button v-for="(slide, index) in previewCards" :key="`preview-slot-${index}`" class="preview-card" :data-swap-target="previewTargetIndex === index" type="button" :aria-label="`将${slide.title}展开到主视图`" data-reveal :style="{ '--reveal-order': index }" @click="selectPreview(index)">
+              <div class="preview-crop"><img :ref="(element) => setPreviewImageRef(element, index)" :class="{ 'preview-image-hidden': isPreviewHidden(slide.id) }" :src="slide.image" :alt="slide.alt" /><span class="preview-action">点击展开</span></div>
+              <div><span>0{{ index + 1 }}</span><h3>{{ slide.title }}</h3><p>{{ slide.description }}</p></div>
             </button>
           </div>
-          
-          <div class="code-content">
-            <div class="code-header">
-              <div class="code-dots">
-                <span class="dot red"></span>
-                <span class="dot yellow"></span>
-                <span class="dot green"></span>
-              </div>
-              <span class="code-title">{{ codeTitles[activeTab] }}</span>
-              <button class="copy-btn" @click="copyCode">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                </svg>
-              </button>
+          <article class="frontend-project" data-reveal>
+            <div class="frontend-project-copy">
+              <span class="eyebrow">PAIRED FRONTEND</span>
+              <div class="frontend-project-title"><img class="frontend-logo" src="/gin-layout-mark.svg" alt="" /><div><h3>X-L-Admin-Vue3</h3><code>github.com/wannanbigpig/go-admin-ui</code></div></div>
+              <p>与 Gin Layout 配套的 Vue 3 管理端。基于后端菜单动态生成路由，覆盖登录与 Token 静默刷新、路由和按钮权限、文件与任务中心、操作日志以及 WebSocket 实时通知。</p>
+              <div class="frontend-tags"><span>Vue 3.5</span><span>TypeScript 6</span><span>Vite 8</span><span>Element Plus 2.14</span><span>Pinia 4</span></div>
+              <div class="frontend-actions"><a class="button button-primary" href="https://github.com/wannanbigpig/go-admin-ui" target="_blank" rel="noreferrer">前端 GitHub<svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h11M10 5l4 4-4 4" /></svg></a><a class="button button-secondary" href="https://x-l-admin.wannanbigpig.com/" target="_blank" rel="noreferrer">在线演示</a></div>
             </div>
-            <pre class="code-block"><code v-html="highlightedCode"></code></pre>
-          </div>
+            <div class="frontend-project-grid" aria-label="X-L-Admin 前端能力">
+              <div><b>01</b><strong>动态路由</strong><span>后端菜单驱动页面与导航</span></div>
+              <div><b>02</b><strong>权限体系</strong><span>路由、菜单与按钮级控制</span></div>
+              <div><b>03</b><strong>实时协作</strong><span>WebSocket 通知与导出联动</span></div>
+              <div><b>04</b><strong>工程底座</strong><span>Axios、i18n、主题与测试</span></div>
+            </div>
+          </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- 演示 -->
-    <section id="demo" class="demo">
-      <div class="container-full">
-        <div class="demo-wrapper">
-          <div class="demo-content">
-            <span class="section-tag">在线演示</span>
-            <h2 class="section-title">亲身体验</h2>
-            <p class="section-desc">完整的管理后台功能，即刻体验</p>
-            
-            <div class="demo-credentials">
-              <div class="credential-item">
-                <span class="credential-label">演示地址</span>
-                <a href="https://x-l-admin.wannanbigpig.com" target="_blank" class="credential-value link">
-                  x-l-admin.wannanbigpig.com
-                </a>
-              </div>
-              <div class="credential-item">
-                <span class="credential-label">用户名</span>
-                <code class="credential-value">super_admin</code>
-              </div>
-              <div class="credential-item">
-                <span class="credential-label">密码</span>
-                <code class="credential-value">123456</code>
-              </div>
-            </div>
-            
-            <a href="https://x-l-admin.wannanbigpig.com" target="_blank" class="btn btn-primary btn-large">
-              <span>立即体验</span>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                <polyline points="15 3 21 3 21 9"/>
-                <line x1="10" y1="14" x2="21" y2="3"/>
-              </svg>
-            </a>
+      <section id="features" class="section capabilities-section">
+        <div class="container">
+          <div class="section-heading split-heading" data-reveal>
+            <div><span class="eyebrow">CORE CAPABILITIES</span><h2>后台项目需要的基础能力，已经准备好。</h2></div>
+            <p>不制造过度抽象，只把身份、权限、文件、任务和审计这些高频基础设施组织成可读、可扩展的工程结构。</p>
           </div>
-          
-          <div class="demo-preview">
-            <div class="preview-mockup">
-              <div class="mockup-header">
-                <div class="mockup-dots">
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                  <span class="dot"></span>
-                </div>
-              </div>
-              <div class="mockup-content">
-                <div class="mockup-sidebar"></div>
-                <div class="mockup-main">
-                  <div class="mockup-topbar"></div>
-                  <div class="mockup-body">
-                    <div class="mockup-card"></div>
-                    <div class="mockup-card"></div>
-                    <div class="mockup-card"></div>
+          <div class="capability-grid">
+            <article v-for="(item, index) in capabilities" :key="item.title" class="capability-card" data-reveal :style="{ '--reveal-order': index }">
+              <div class="capability-top"><svg viewBox="0 0 28 28" aria-hidden="true"><path :d="item.icon" /></svg><span>0{{ index + 1 }}</span></div>
+              <h3>{{ item.title }}</h3><p>{{ item.description }}</p><ul><li v-for="tag in item.tags" :key="tag">{{ tag }}</li></ul>
+            </article>
+          </div>
+          <div class="backend-architecture" data-reveal>
+            <div class="architecture-header">
+              <div><span class="eyebrow">BACKEND ARCHITECTURE</span><h3>一套契约，三类进程，完整承接后台业务。</h3><p>请求链路保持职责清晰；异步消费与定时调度独立运行，数据、权限和接口文档仍由同一套工程约定串联。</p></div>
+              <div class="process-legend" aria-label="后端进程图例"><span><i class="legend-service"></i>service · HTTP API</span><span><i class="legend-worker"></i>worker · 异步消费</span><span><i class="legend-cron"></i>cron · 定时调度</span></div>
+            </div>
+            <div class="architecture-canvas">
+              <section class="contract-plane" aria-label="路由契约平面">
+                <div class="architecture-index"><b>01</b><span>CONTRACT PLANE</span></div>
+                <div class="contract-source"><small>DECLARATION</small><strong>AdminRouteTree()</strong><code>path · method · security · metadata</code></div>
+                <span class="architecture-connector" aria-hidden="true">→</span>
+                <div class="contract-compiler"><small>COMPILE</small><strong>Catalog</strong><code>CompileRouteTree()</code></div>
+                <span class="architecture-connector" aria-hidden="true">→</span>
+                <div class="contract-outputs"><div><b>RUNTIME</b><span>Gin Router</span></div><div><b>ACCESS</b><span>API / 权限同步</span></div><div><b>SPEC</b><span>OpenAPI</span></div><div><b>VERIFY</b><span>契约测试</span></div></div>
+              </section>
+
+              <section class="runtime-plane" aria-label="运行时进程">
+                <div class="architecture-index"><b>02</b><span>RUNTIME PLANE</span></div>
+                <article class="runtime-process service-process">
+                  <header><div><i class="legend-service"></i><small>SERVICE PROCESS</small></div><strong>HTTP 请求主链路</strong><span>同步响应 · 端口 9001</span></header>
+                  <div class="service-flow">
+                    <div><b>01</b><small>ENTRY</small><strong>Gin Router</strong><span>Catalog 注册路由</span></div>
+                    <div><b>02</b><small>GUARD</small><strong>Middleware</strong><span>限流 · JWT · RBAC · 日志</span></div>
+                    <div><b>03</b><small>INPUT</small><strong>Controller + Validator</strong><span>绑定、校验与调用</span></div>
+                    <div><b>04</b><small>DOMAIN</small><strong>Service</strong><span>业务规则与事务</span></div>
+                    <div><b>05</b><small>DATA</small><strong>Model / GORM</strong><span>MySQL 数据访问</span></div>
+                    <div><b>06</b><small>OUTPUT</small><strong>Resources + Response</strong><span>code · data · request_id</span></div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                  <div class="service-integrations"><span>Redis 缓存 / 权限版本</span><span>Local / Aliyun OSS</span><span>Asynq Producer</span><span>Pub/Sub · WebSocket</span></div>
+                </article>
 
-    <!-- 页脚 -->
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-brand">
-            <div class="footer-logo">
-              <img src="./assets/logo.png" alt="Gin Layout" class="logo-img" />
-              <span>Gin Layout</span>
-            </div>
-            <p class="footer-desc">让 Go 后台开发更简单</p>
-          </div>
-          
-          <div class="footer-links">
-            <div class="footer-column">
-              <h5>资源</h5>
-              <a href="https://github.com/wannanbigpig/gin-layout" target="_blank">GitHub</a>
-              <a href="https://github.com/wannanbigpig/go-admin-ui" target="_blank">前端仓库</a>
-            </div>
-            <div class="footer-column">
-              <h5>链接</h5>
-              <a @click="scrollTo('features')">特性</a>
-              <a @click="scrollTo('quickstart')">文档</a>
-              <a @click="scrollTo('demo')">演示</a>
+                <div class="background-processes">
+                  <article class="runtime-process worker-process">
+                    <header><div><i class="legend-worker"></i><small>WORKER PROCESS</small></div><strong>Asynq 异步消费</strong><span>独立扩缩容</span></header>
+                    <div class="compact-flow"><div><small>QUEUE</small><strong>Redis / Asynq</strong><span>service 投递任务</span></div><b>→</b><div><small>REGISTRY</small><strong>Job Registry</strong><span>任务类型与处理器</span></div><b>→</b><div><small>EXECUTE</small><strong>Handler</strong><span>重试 · 留存 · 运行记录</span></div></div>
+                  </article>
+                  <article class="runtime-process cron-process">
+                    <header><div><i class="legend-cron"></i><small>CRON PROCESS</small></div><strong>动态定时调度</strong><span>默认直接执行</span></header>
+                    <div class="cron-sources"><span>MySQL · task_definitions</span><span>Redis Pub/Sub · 配置刷新</span></div>
+                    <div class="compact-flow"><div><small>SCHEDULE</small><strong>robfig/cron</strong><span>秒级表达式 · 防重叠</span></div><b>→</b><div><small>EXECUTE</small><strong>ExecuteHandler</strong><span>直接调用注册处理器</span></div><b>→</b><div><small>STATE</small><strong>MySQL</strong><span>运行记录与调度状态</span></div></div>
+                  </article>
+                </div>
+              </section>
+
+              <section class="infrastructure-plane" aria-label="共享基础设施">
+                <div class="architecture-index"><b>03</b><span>STATE &amp; INFRASTRUCTURE</span></div>
+                <div class="infrastructure-items"><div><small>RELATIONAL DATA</small><strong>MySQL</strong><span>业务、权限、任务与审计</span></div><div><small>CACHE / QUEUE / BUS</small><strong>Redis</strong><span>缓存、Asynq、Pub/Sub</span></div><div><small>OBJECT STORAGE</small><strong>Local / Aliyun OSS</strong><span>直传、分片与文件对象</span></div></div>
+              </section>
             </div>
           </div>
         </div>
-        
-        <div class="footer-bottom">
-          <p>© 2024 Gin Layout. Open source under MIT License.</p>
+      </section>
+
+      <section id="quickstart" class="section quickstart-section">
+        <div class="container quickstart-layout">
+          <div class="quickstart-intro" data-reveal="left"><span class="eyebrow eyebrow-dark">GET IT RUNNING</span><h2>现在，启动你的<br />第一个后台服务。</h2><p>按当前仓库要求准备 Go、MySQL 与 Redis。每一步都给出可直接执行的命令和成功标志。</p>
+            <div class="requirements"><span>Go <b>≥ 1.27</b></span><span>MySQL <b>≥ 8.0</b></span><span>Redis <b>≥ 6.2</b> <small>可选</small></span></div>
+          </div>
+          <div class="setup-panel" data-reveal="right">
+            <div class="setup-tabs" role="tablist" aria-label="快速开始步骤">
+              <button v-for="(stage, index) in setupStages" :key="stage.id" :class="{ active: activeSetup === index }" type="button" role="tab" :aria-selected="activeSetup === index" @click="activeSetup = index"><span>0{{ index + 1 }}</span>{{ stage.label }}</button>
+            </div>
+            <div class="setup-body">
+              <div class="setup-copy"><span>STEP 0{{ activeSetup + 1 }}</span><h3>{{ currentSetup.title }}</h3><p>{{ currentSetup.description }}</p><ul><li v-for="note in currentSetup.notes" :key="note">{{ note }}</li></ul></div>
+              <div class="code-card"><div class="code-card-head"><span>terminal</span><button type="button" @click="copyText(currentSetup.code, `setup-${activeSetup}`)">{{ copiedKey === `setup-${activeSetup}` ? '已复制' : '复制' }}</button></div><pre><code>{{ currentSetup.code }}</code></pre></div>
+            </div>
+          </div>
         </div>
-      </div>
-    </footer>
+      </section>
+
+      <section id="tutorial" class="section tutorial-section">
+        <div class="container">
+          <div class="section-heading tutorial-heading" data-reveal><span class="eyebrow">LEARN THE SYSTEM</span><h2>沿着一次真实请求，<br />看懂项目怎么工作。</h2><p>教程不复述目录树，而是从你真正会修改的四个场景出发。</p></div>
+          <div class="tutorial-workbench" data-reveal>
+            <div class="tutorial-nav" role="tablist" aria-label="教程章节">
+              <button v-for="(item, index) in tutorials" :key="item.id" :class="{ active: activeTutorial === index }" type="button" role="tab" :aria-selected="activeTutorial === index" @click="activeTutorial = index"><span>0{{ index + 1 }}</span><div><b>{{ item.title }}</b><small>{{ item.subtitle }}</small></div><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h11M10 5l4 4-4 4" /></svg></button>
+            </div>
+            <article class="tutorial-content">
+              <div class="tutorial-meta"><span>CHAPTER 0{{ activeTutorial + 1 }}</span><span>{{ currentTutorial.duration }}</span></div>
+              <h3>{{ currentTutorial.heading }}</h3><p class="tutorial-summary">{{ currentTutorial.summary }}</p>
+              <div class="tutorial-points"><div v-for="(point, index) in currentTutorial.points" :key="point.title"><span>{{ index + 1 }}</span><p><b>{{ point.title }}</b>{{ point.text }}</p></div></div>
+              <div class="tutorial-code"><div><span>{{ currentTutorial.file }}</span><button type="button" @click="copyText(currentTutorial.code, `tutorial-${activeTutorial}`)">{{ copiedKey === `tutorial-${activeTutorial}` ? '已复制' : '复制' }}</button></div><pre><code>{{ currentTutorial.code }}</code></pre></div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="api" class="section api-section">
+        <div class="container">
+        <div class="api-section-head" data-reveal><div><span class="eyebrow">API CATALOG</span><h2>直接浏览项目现有接口。</h2><p>按业务分组、HTTP 方法或关键词筛选，快速确认路径、认证方式与请求示例。</p></div><div class="api-count"><strong>{{ apiCatalog.length }}</strong><span>个当前接口<br />{{ apiGroups.length - 1 }} 个业务分组</span></div></div>
+        <section class="api-conventions" aria-labelledby="api-conventions-title" data-reveal>
+          <div class="conventions-intro">
+            <span class="eyebrow">COMMON CONVENTIONS</span>
+            <h3 id="api-conventions-title">公共调用约定</h3>
+            <p>接口详情只描述业务参数；鉴权、响应外壳、分页与 HTTP 状态遵循以下统一规则。</p>
+            <div class="base-url"><span>BASE URL</span><code>http://127.0.0.1:9001</code></div>
+          </div>
+          <article class="convention-card auth-convention">
+            <div class="convention-title"><span>01</span><div><h4>Token 与凭证</h4><p>普通登录态和权限接口共用 Bearer Token。</p></div></div>
+            <div class="convention-code"><code>Authorization: Bearer &lt;access_token&gt;</code><button type="button" @click="copyText(authHeaderExample, 'auth-header')">{{ copiedKey === 'auth-header' ? '已复制' : '复制' }}</button></div>
+            <ul class="convention-list">
+              <li><b>公开</b><span>无需凭证。</span></li>
+              <li><b>Access Token</b><span>只校验登录身份。</span></li>
+              <li><b>接口权限</b><span>校验身份后继续执行 Casbin 权限判定。</span></li>
+              <li><b>Refresh Cookie</b><span>浏览器携带 HttpOnly <code>refresh_token</code>，并发送 <code>X-Requested-With: XMLHttpRequest</code>。</span></li>
+              <li><b>WebSocket Ticket</b><span>先申请一次性 ticket，再通过 Query 参数建立连接。</span></li>
+            </ul>
+          </article>
+          <article class="convention-card response-convention">
+            <div class="convention-title"><span>02</span><div><h4>统一响应</h4><p><code>code=0</code> 表示业务成功，同时 HTTP 状态为 200。</p></div></div>
+            <div class="convention-json"><div><span>SUCCESS</span><button type="button" @click="copyText(commonSuccessExample, 'common-response')">{{ copiedKey === 'common-response' ? '已复制' : '复制' }}</button></div><pre><code>{{ commonSuccessExample }}</code></pre></div>
+            <p class="convention-note"><code>data</code> 是业务数据；无返回数据时为 <code>{}</code>。数组或标量会包装为 <code>data.result</code>，<code>request_id</code> 用于日志追踪。</p>
+          </article>
+          <article class="convention-card status-convention">
+            <div class="convention-title"><span>03</span><div><h4>分页与错误</h4><p>列表分页字段统一位于 <code>data</code> 内。</p></div></div>
+            <div class="pagination-contract"><code>total</code><code>per_page</code><code>current_page</code><code>last_page</code><code>data[]</code></div>
+            <div class="status-list">
+              <div><b>400</b><span>参数错误或业务冲突</span></div>
+              <div><b>401</b><span>未登录、Token 失效或登录凭证错误</span></div>
+              <div><b>403</b><span>已登录但没有接口权限</span></div>
+              <div><b>404</b><span>资源不存在</span></div>
+              <div><b>500 / 503</b><span>服务内部错误或依赖未就绪</span></div>
+            </div>
+            <p class="convention-note">失败时 <code>code != 0</code>，不要只判断 HTTP 200；前端应同时读取 HTTP 状态、<code>code</code> 和 <code>msg</code>。</p>
+          </article>
+        </section>
+        <div class="api-explorer">
+          <div class="api-toolbar">
+            <label class="api-search"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5" /><path d="m13 13 4 4" /></svg><input v-model="apiQuery" type="search" placeholder="搜索路径或接口名称" /><kbd>/</kbd></label>
+            <div class="method-filters"><button v-for="method in ['ALL', 'GET', 'POST']" :key="method" :class="{ active: apiMethod === method }" type="button" @click="apiMethod = method">{{ method }}</button></div>
+            <div class="api-result-count">{{ filteredApis.length }} RESULTS</div>
+          </div>
+          <div class="api-groups"><button v-for="group in apiGroups" :key="group" :class="{ active: apiGroup === group }" type="button" @click="apiGroup = group">{{ group }}</button></div>
+        <div class="api-browser" data-reveal>
+            <div class="api-list" aria-label="接口列表">
+              <button v-for="endpoint in filteredApis" :key="`${endpoint.method}-${endpoint.path}`" :class="['api-row', { active: activeEndpoint === endpoint }]" type="button" @click="selectEndpoint(endpoint)"><span :class="['method', `method-${endpoint.method.toLowerCase()}`]">{{ endpoint.method }}</span><span class="api-row-main"><code>{{ endpoint.path }}</code><small>{{ endpoint.title }}</small></span><svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h11M10 5l4 4-4 4" /></svg></button>
+              <div v-if="filteredApis.length === 0" class="api-empty">没有匹配的接口，换个关键词试试。</div>
+            </div>
+            <article v-if="activeEndpoint" class="api-detail">
+              <div class="api-detail-top"><span>{{ activeEndpoint.group }}</span><button type="button" @click="copyText(activeEndpoint.path, 'api-path')">{{ copiedKey === 'api-path' ? '已复制' : '复制路径' }}</button></div>
+              <div class="api-detail-title"><span :class="['method', `method-${activeEndpoint.method.toLowerCase()}`]">{{ activeEndpoint.method }}</span><code>{{ activeEndpoint.path }}</code></div>
+              <h3>{{ activeEndpoint.title }}</h3><p>{{ activeEndpoint.description || '该接口遵循统一响应结构，由对应业务控制器处理参数并调用 service。' }}</p>
+              <div class="api-auth"><span>AUTH</span><div><b>{{ activeEndpoint.auth }}</b><p>{{ authDescription[activeEndpoint.auth] }}</p></div></div>
+              <section class="parameter-section">
+                <div class="api-block-heading"><span>请求参数</span><small>{{ activeEndpoint.parameters.length ? `${activeEndpoint.parameters.length} FIELDS` : 'NO PARAMETERS' }}</small></div>
+                <div v-if="activeEndpoint.parameters.length" class="parameter-table-wrap">
+                  <table class="parameter-table">
+                    <thead><tr><th>参数</th><th>位置</th><th>类型</th><th>必填</th><th>说明 / 示例</th></tr></thead>
+                    <tbody><tr v-for="item in activeEndpoint.parameters" :key="`${item.location}-${item.name}`"><td><code>{{ item.name }}</code></td><td><span class="location-tag">{{ item.location }}</span></td><td>{{ item.type }}</td><td><span :class="['required-tag', { required: item.required }]">{{ item.required ? '是' : '否' }}</span></td><td><p>{{ item.description }}</p><code v-if="item.example !== undefined">{{ formatParameterExample(item.example) }}</code></td></tr></tbody>
+                  </table>
+                </div>
+                <div v-else class="parameter-empty">该接口没有业务请求参数；认证凭证仍按上方 AUTH 说明携带。</div>
+              </section>
+              <div class="request-example"><div><span>请求示例</span><button type="button" @click="copyText(curlExample, 'curl')">{{ copiedKey === 'curl' ? '已复制' : '复制 cURL' }}</button></div><pre><code>{{ curlExample }}</code></pre></div>
+              <div class="response-schema"><div class="api-block-heading"><span>成功响应示例</span><button type="button" @click="copyText(responseExampleText, 'response')">{{ copiedKey === 'response' ? '已复制' : '复制响应' }}</button></div><pre><code>{{ responseExampleText }}</code></pre></div>
+            </article>
+          </div>
+        </div>
+        </div>
+      </section>
+
+      <section class="closing-section"><div class="container closing-content" data-reveal><div><span class="eyebrow">OPEN SOURCE · MIT</span><h2>从可靠的基础开始，<br />专注构建你的业务。</h2><p>后端 Gin Layout 与前端 X-L-Admin 配套使用，也可以按自己的技术选型独立接入。</p></div><div class="closing-actions"><a class="button button-white" href="#quickstart">开始使用</a><a class="button button-outline" href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">GitHub 仓库</a></div></div></section>
+    </main>
+
+    <footer class="site-footer"><div class="container footer-layout"><div><a class="brand footer-brand" href="#top"><img class="brand-mark" src="/gin-layout-mark.svg" alt="" /><span>Gin Layout</span></a><p>面向真实后台业务的 Go 工程骨架。</p></div><div class="footer-links"><a href="#preview">产品预览</a><a href="#quickstart">快速开始</a><a href="#api">API 目录</a><a href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">后端仓库</a><a href="https://github.com/wannanbigpig/go-admin-ui" target="_blank" rel="noreferrer">前端仓库</a></div><small>© 2026 Gin Layout · MIT License</small></div></footer>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { 
-  User, Lock, Menu, Connection, Setting, Document,
-  DataAnalysis, Monitor, Grid, Cpu
-} from '@element-plus/icons-vue'
+import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
+import { apiCatalog, apiGroups, authDescription } from './data/api-catalog'
 
-const isScrolled = ref(false)
 const mobileMenuOpen = ref(false)
-const activeTab = ref('backend')
-const theme = ref('dark')
+const githubStars = ref(158)
+const siteShell = ref(null)
+const showcaseImage = ref(null)
+const previewImageElements = ref([])
+const activePreviewId = ref('workspace')
+const previewCardIds = ref(['permissions', 'audit', 'permissions-wide'])
+const hiddenPreviewIds = ref([])
+const previewSwapping = ref(false)
+const previewTargetIndex = ref(-1)
+const activeSetup = ref(0)
+const activeTutorial = ref(0)
+const copiedKey = ref('')
+const apiQuery = ref('')
+const apiMethod = ref('ALL')
+const apiGroup = ref('全部')
+const selectedApiKey = ref('GET-/ping')
+const authHeaderExample = 'Authorization: Bearer <access_token>'
+const commonSuccessExample = `{
+  "code": 0,
+  "msg": "OK",
+  "data": {},
+  "cost": "2.31ms",
+  "request_id": "7d9d6d0e-51a3-4b80-a3b2-6ec759f5cd30"
+}`
+let copyTimer
+let revealObserver
+let pointerFrame
+let pointerPosition
+let githubStarsController
+const previewFlightNodes = new Set()
 
-// 主题切换
-const setTheme = (newTheme) => {
-  theme.value = newTheme
-  localStorage.setItem('theme', newTheme)
-  applyTheme(newTheme)
+function formatGithubStars(value) {
+  if (!Number.isFinite(value)) return '—'
+  if (value < 1000) return String(value)
+  return `${(value / 1000).toFixed(value < 10000 ? 1 : 0)}k`
 }
 
-const applyTheme = (themeMode) => {
-  const website = document.querySelector('.website')
-  if (!website) return
-  
-  if (themeMode === 'system') {
-    const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    applyTheme(systemDark ? 'dark' : 'light')
-    return
-  }
-  
-  if (themeMode === 'dark') {
-    website.style.setProperty('--color-bg', '#0a0a0f')
-    website.style.setProperty('--color-bg-rgb', '10, 10, 15')
-    website.style.setProperty('--color-bg-secondary', '#12121a')
-    website.style.setProperty('--color-bg-card', '#1a1a25')
-    website.style.setProperty('--color-text', '#ffffff')
-    website.style.setProperty('--color-text-secondary', '#a0a0b0')
-    website.style.setProperty('--color-text-muted', '#6b6b80')
-    website.style.setProperty('--color-border', '#2a2a3a')
-    website.style.setProperty('--shadow-sm', '0 2px 8px rgba(0, 0, 0, 0.3)')
-    website.style.setProperty('--shadow-md', '0 4px 16px rgba(0, 0, 0, 0.4)')
-    website.style.setProperty('--shadow-lg', '0 10px 40px rgba(0, 0, 0, 0.5)')
-  } else {
-    website.style.setProperty('--color-bg', '#ffffff')
-    website.style.setProperty('--color-bg-rgb', '255, 255, 255')
-    website.style.setProperty('--color-bg-secondary', '#f5f5f7')
-    website.style.setProperty('--color-bg-card', '#ffffff')
-    website.style.setProperty('--color-text', '#1a1a1a')
-    website.style.setProperty('--color-text-secondary', '#666666')
-    website.style.setProperty('--color-text-muted', '#999999')
-    website.style.setProperty('--color-border', '#e5e5e5')
-    website.style.setProperty('--shadow-sm', '0 2px 8px rgba(0, 0, 0, 0.08)')
-    website.style.setProperty('--shadow-md', '0 4px 16px rgba(0, 0, 0, 0.12)')
-    website.style.setProperty('--shadow-lg', '0 10px 40px rgba(0, 0, 0, 0.16)')
-  }
-}
+async function loadGithubStars() {
+  githubStarsController?.abort()
+  githubStarsController = new AbortController()
+  const controller = githubStarsController
+  const timeoutId = window.setTimeout(() => controller.abort(), 5000)
 
-const initTheme = () => {
-  const savedTheme = localStorage.getItem('theme') || 'dark'
-  theme.value = savedTheme
-  applyTheme(savedTheme)
-  
-  // 监听系统主题变化
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-    if (theme.value === 'system') {
-      applyTheme(e.matches ? 'dark' : 'light')
+  try {
+    const response = await fetch('https://api.github.com/repos/wannanbigpig/gin-layout', {
+      headers: { Accept: 'application/vnd.github+json' },
+      signal: controller.signal,
+    })
+    if (!response.ok) return
+
+    const repository = await response.json()
+    if (Number.isInteger(repository.stargazers_count)) {
+      githubStars.value = repository.stargazers_count
     }
+  } catch {
+    // GitHub 不可用时保留占位符，不影响导航与页面其余内容。
+  } finally {
+    window.clearTimeout(timeoutId)
+    if (githubStarsController === controller) githubStarsController = undefined
+  }
+}
+
+const navItems = [
+  { id: 'preview', label: '产品预览' }, { id: 'features', label: '核心能力' }, { id: 'quickstart', label: '快速开始' },
+  { id: 'tutorial', label: '使用教程' }, { id: 'api', label: 'API 目录' }
+]
+
+const capabilities = [
+  { title: '身份与权限', description: '双 Token 会话、Casbin 接口鉴权与菜单按钮权限共用一套数据关系。', tags: ['JWT', 'RBAC', 'Session'], icon: 'M4 24V10l10-6 10 6v14M9 24v-8h10v8M14 4v7' },
+  { title: '声明式路由', description: '路由、认证策略、API 元数据与测试契约从同一个 Catalog 生成。', tags: ['Route Tree', 'Catalog', 'OpenAPI'], icon: 'M5 6h7M16 6h7M9 6v8h10v8M15 18l4 4 4-4' },
+  { title: '文件与存储', description: '覆盖本地上传、直传、分片、目录、回收站和可切换对象存储配置。', tags: ['Local', 'OSS', 'Multipart'], icon: 'M4 9h8l2 3h10v11H4zM7 9V5h7l3 4' },
+  { title: '任务与审计', description: 'service、worker、cron 进程解耦，请求日志与任务记录完整留痕。', tags: ['Asynq', 'Cron', 'Audit'], icon: 'M14 4a10 10 0 1 0 10 10M14 8v7l5 3M20 4h4v4' }
+]
+
+const previewSlides = [
+  { id: 'permissions', image: '/screenshots/x-l-admin-super-admin-users.jpg', alt: '超级管理员用户与权限管理截图', label: '权限与组织管理', title: '动态菜单与权限', description: '管理员、部门、角色、菜单和接口权限形成完整的后台授权链路。' },
+  { id: 'workspace', image: '/screenshots/x-l-admin-super-admin-home.jpg', alt: '超级管理员工作台截图', label: '超级管理员工作台', title: '角色化工作台', description: '根据当前用户展示快捷入口、登录信息与可访问的运营数据。' },
+  { id: 'audit', image: '/screenshots/x-l-admin-super-admin-logs.jpg', alt: '超级管理员请求日志截图', label: '请求日志与风险标记', title: '审计与风险标记', description: '集中展示最近操作、风险级别与数据变更，便于日常追溯。' },
+  { id: 'permissions-wide', image: '/screenshots/x-l-admin-super-admin-wide-users.png', alt: '超级管理员全宽权限管理截图', label: '全宽权限管理', title: '完整数据视图', description: '在宽屏布局中完整展示筛选、权限数据和操作列，适合复杂管理场景。' }
+]
+const previewSlideMap = new Map(previewSlides.map((slide) => [slide.id, slide]))
+
+const setupStages = [
+  { id: 'clone', label: '获取代码', title: '克隆仓库并安装依赖', description: '先确认本地 Go 版本满足 go.mod，再下载项目依赖。', notes: ['推荐使用 Go 1.27 或更高版本', '命令应在项目根目录执行'], code: `git clone https://github.com/wannanbigpig/gin-layout.git
+cd gin-layout
+go mod download
+go mod verify` },
+  { id: 'config', label: '准备配置', title: '创建本地配置', description: '开发模式会自动准备示例配置，也可以显式复制后再填写数据库与 JWT。', notes: ['jwt.secret_key 不能为空', '只启动 API 时可关闭 queue.enable'], code: `cp config/config.yaml.example ./config.yaml
+
+# 编辑 config.yaml
+# mysql.database: go_layout
+# jwt.secret_key: <random-secret>` },
+  { id: 'migrate', label: '初始化数据', title: '执行并校验数据库迁移', description: '迁移会创建结构与默认基础数据。默认账号仅用于本地初始化。', notes: ['默认管理员：super_admin / 123456', '首次登录后请立即修改密码'], code: `go run main.go -c ./config.yaml command migrate
+go run main.go -c ./config.yaml command migrate check` },
+  { id: 'run', label: '启动验证', title: '启动 service 并检查就绪状态', description: 'service 提供 HTTP API；启用队列时，在另一个终端单独启动 worker。', notes: ['/ping 验证进程存活', '/health/readiness 验证依赖就绪'], code: `GO_ENV=development go run main.go -c ./config.yaml service
+
+# 新终端：queue.enable=true 时启动
+GO_ENV=development go run main.go -c ./config.yaml worker
+
+curl http://127.0.0.1:9001/ping
+curl http://127.0.0.1:9001/health/readiness` }
+]
+
+const tutorials = [
+  { id: 'request', title: '新增业务接口', subtitle: '从 route 到 response', duration: '约 8 分钟', heading: '沿着既有分层，新增一个可授权的接口', summary: '先定义输入和业务规则，再把 handler 挂到声明式路由树。不要让 controller 直接承担查询与事务。', points: [{ title: '定义契约', text: '在 form 与 resources 中明确输入输出。' }, { title: '实现业务', text: 'service 组织规则，model 负责数据访问。' }, { title: '声明路由', text: '在对应 RouteGroupDef 中注册，并继承安全策略。' }], file: 'internal/routers/admin_router.go', code: `func productGroup(deps *ControllerDeps) RouteGroupDef {
+  return RouteGroupDef{
+    Prefix: "product",
+    GroupCode: "product",
+    Routes: []RouteDef{
+      GET("list", "产品列表", deps.Product.List),
+      POST("create", "新增产品", deps.Product.Create),
+    },
+  }
+}` },
+  { id: 'auth', title: '理解认证权限', subtitle: '五类安全策略', duration: '约 6 分钟', heading: '先区分“已登录”和“有权访问”', summary: 'Access Token 只确认身份；AccessTokenPermission 还会进入 Casbin 判定。Refresh Cookie 与 WebSocket ticket 则有各自凭证边界。', points: [{ title: '公开接口', text: '登录、验证码与公开文件不要求会话。' }, { title: '登录接口', text: '个人资料、个人工作台只要求有效登录。' }, { title: '权限接口', text: '后台管理写操作需要接口权限。' }], file: 'internal/routers/catalog.go', code: `const (
+  SecurityPublic SecurityPolicy = iota
+  SecurityAccessToken
+  SecurityAccessTokenPermission
+  SecurityRefreshCookie
+  SecurityWebSocketTicket
+)` },
+  { id: 'task', title: '接入异步任务', subtitle: 'worker 与 cron', duration: '约 10 分钟', heading: '把耗时工作交给独立进程', summary: 'service 负责 API，worker 消费 Asynq，cron 只负责按时间触发。一个周期任务只保留一个调度入口。', points: [{ title: '定义任务', text: '声明 payload、队列和处理器。' }, { title: '配置队列', text: '确保 queue.queues 包含目标队列。' }, { title: '同步定义', text: '内置任务更新后执行 sync-definitions。' }], file: 'terminal', code: `# 启动消费进程
+GO_ENV=development go run main.go -c ./config.yaml worker
+
+# 同步内置任务定义
+go run main.go -c ./config.yaml command task sync-definitions
+
+# 启动定时调度
+GO_ENV=development go run main.go -c ./config.yaml cron` },
+  { id: 'verify', title: '验证与交付', subtitle: '测试、同步、构建', duration: '约 5 分钟', heading: '把静态检查与真实环境验证分开', summary: '代码测试通过不等于目标环境已同步。路由契约变化后，还要在获授权环境更新 API 表与权限缓存。', points: [{ title: '代码验证', text: '运行相关测试，跨模块变更运行全量测试。' }, { title: '迁移校验', text: '检查命名、版本与 up/down 配对。' }, { title: '环境同步', text: '只在明确目标环境执行写入命令。' }], file: 'terminal', code: `gofmt -w <changed-go-files>
+go test ./...
+go vet ./...
+go run main.go -c ./config.yaml command migrate check
+
+# 路由契约变化时，在目标环境执行
+go run main.go -c ./config.yaml command api-route -y` }
+]
+
+const currentSetup = computed(() => setupStages[activeSetup.value])
+const currentTutorial = computed(() => tutorials[activeTutorial.value])
+const activePreviewSlide = computed(() => previewSlideMap.get(activePreviewId.value))
+const previewCards = computed(() => previewCardIds.value.map((id) => previewSlideMap.get(id)))
+const filteredApis = computed(() => {
+  const keyword = apiQuery.value.trim().toLowerCase()
+  return apiCatalog.filter((endpoint) => (apiGroup.value === '全部' || endpoint.group === apiGroup.value) && (apiMethod.value === 'ALL' || endpoint.method === apiMethod.value) && (!keyword || `${endpoint.path} ${endpoint.title} ${endpoint.group}`.toLowerCase().includes(keyword)))
+})
+const activeEndpoint = computed(() => filteredApis.value.find((endpoint) => `${endpoint.method}-${endpoint.path}` === selectedApiKey.value) || filteredApis.value[0])
+const responseExampleText = computed(() => formatExample(activeEndpoint.value?.responseExample))
+const curlExample = computed(() => {
+  if (!activeEndpoint.value) return ''
+  const endpoint = activeEndpoint.value
+  let requestPath = endpoint.path
+  endpoint.parameters.filter((item) => item.location === 'Path').forEach((item) => { requestPath = requestPath.replace(`:${item.name}`, String(item.example)) })
+  const queryString = endpoint.parameters
+    .filter((item) => item.location === 'Query' && item.example !== undefined && item.example !== '')
+    .map((item) => `${encodeURIComponent(item.name)}=${encodeURIComponent(typeof item.example === 'object' ? JSON.stringify(item.example) : item.example)}`)
+    .join('&')
+  const url = `http://127.0.0.1:9001${requestPath}${queryString ? `?${queryString}` : ''}`
+  const lines = [`curl -X ${endpoint.method} \\`]
+  if (['Access Token', '接口权限'].includes(endpoint.auth)) lines.push(`  -H 'Authorization: Bearer <access_token>' \\`)
+  if (endpoint.auth === 'Refresh Cookie') lines.push(`  --cookie 'refresh_token=<refresh_token>' \\`)
+  endpoint.parameters.filter((item) => item.location === 'Header').forEach((item) => lines.push(`  -H '${item.name}: ${formatParameterExample(item.example)}' \\`))
+  if (endpoint.contentType === 'multipart/form-data') {
+    endpoint.parameters.filter((item) => item.location === 'Body').forEach((item) => lines.push(`  -F '${item.name}=${formatParameterExample(item.example)}' \\`))
+  } else if (endpoint.requestBody && Object.keys(endpoint.requestBody).length) {
+    lines.push(`  -H 'Content-Type: application/json' \\`)
+    lines.push(`  -d '${JSON.stringify(endpoint.requestBody, null, 2)}' \\`)
+  }
+  lines.push(`  '${url}'`)
+  return lines.join('\n')
+})
+
+function formatExample(value) {
+  if (typeof value === 'string') return value
+  return JSON.stringify(value ?? {}, null, 2)
+}
+function formatParameterExample(value) {
+  if (typeof value === 'string') return value
+  return JSON.stringify(value)
+}
+async function selectEndpoint(endpoint) {
+  selectedApiKey.value = `${endpoint.method}-${endpoint.path}`
+  if (window.matchMedia('(max-width: 820px)').matches) {
+    await nextTick()
+    document.querySelector('.api-detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+}
+
+function closeMenu() { mobileMenuOpen.value = false }
+function setPreviewImageRef(element, index) {
+  previewImageElements.value[index] = element
+}
+function isPreviewHidden(slideId) {
+  return hiddenPreviewIds.value.includes(slideId)
+}
+function createPreviewFlight(image, rect, zIndex) {
+  const flight = image.cloneNode()
+  const imageStyle = window.getComputedStyle(image)
+  flight.className = 'preview-flight'
+  Object.assign(flight.style, {
+    left: `${rect.left}px`,
+    top: `${rect.top}px`,
+    width: `${rect.width}px`,
+    height: `${rect.height}px`,
+    zIndex: String(zIndex),
+    objectFit: imageStyle.objectFit,
+    objectPosition: imageStyle.objectPosition
+  })
+  document.body.appendChild(flight)
+  previewFlightNodes.add(flight)
+  return flight
+}
+function animatePreviewFlight(flight, from, to, direction) {
+  const deltaX = to.left - from.left
+  const deltaY = to.top - from.top
+  const scaleX = to.width / from.width
+  const scaleY = to.height / from.height
+  const frame = (travel, scale) => `translate3d(${deltaX * travel}px, ${deltaY * travel}px, 0) scale(${1 + ((scaleX - 1) * scale)}, ${1 + ((scaleY - 1) * scale)})`
+  const down = direction === 'down'
+  const keyframes = down
+    ? [
+        { transform: frame(0, 0), borderRadius: '0px', boxShadow: '0 24px 64px rgba(27,47,76,.22)' },
+        { offset: .72, transform: frame(.8, .86), borderRadius: '8px', boxShadow: '0 14px 34px rgba(27,47,76,.16)' },
+        { transform: frame(1, 1), borderRadius: '10px', boxShadow: '0 8px 20px rgba(27,47,76,.12)' }
+      ]
+    : [
+        { transform: frame(0, 0), borderRadius: '10px', boxShadow: '0 8px 20px rgba(27,47,76,.12)' },
+        { offset: .68, transform: frame(.82, .78), borderRadius: '3px', boxShadow: '0 22px 58px rgba(27,47,76,.2)' },
+        { offset: .92, transform: frame(.985, .985), borderRadius: '0px', boxShadow: '0 8px 26px rgba(27,47,76,.08)' },
+        { transform: frame(1, 1), borderRadius: '0px', boxShadow: '0 0 0 rgba(27,47,76,0)' }
+      ]
+  return flight.animate(keyframes, {
+    duration: down ? 440 : 620,
+    easing: down ? 'cubic-bezier(.22,.68,.28,1)' : 'cubic-bezier(.18,.82,.25,1)',
+    fill: 'forwards'
   })
 }
+async function selectPreview(index) {
+  if (previewSwapping.value) return
+  const incomingId = previewCardIds.value[index]
+  const outgoingId = activePreviewId.value
+  if (!incomingId || incomingId === outgoingId) return
 
-const features = [
-  {
-    icon: 'User',
-    iconName: 'User',
-    title: 'JWT 认证',
-    description: '内置登录认证体系',
-    items: ['Token 登录', '自动刷新', 'Token 黑名单', '登录日志']
-  },
-  {
-    icon: 'Lock',
-    iconName: 'Lock',
-    title: 'RBAC 权限',
-    description: '基于数据库的权限模型',
-    items: ['管理员管理', '角色管理', '部门管理', '菜单管理']
-  },
-  {
-    icon: 'Menu',
-    iconName: 'Menu',
-    title: '声明式路由',
-    description: '统一的路由树管理',
-    items: ['动态路由', 'API 元数据', '权限重建', '菜单国际化']
-  },
-  {
-    icon: 'Connection',
-    iconName: 'Connection',
-    title: '请求日志',
-    description: '完整的操作审计',
-    items: ['请求日志', '登录日志', '统一响应', '错误追踪']
-  },
-  {
-    icon: 'Setting',
-    iconName: 'Setting',
-    title: '配置热更新',
-    description: '运行中动态配置',
-    items: ['文件监听', '失败回滚', '优雅降级', '多环境支持']
-  },
-  {
-    icon: 'Document',
-    iconName: 'Document',
-    title: 'I18n 国际化',
-    description: '多语言支持',
-    items: ['zh-CN / en-US', 'Accept-Language', '错误文案', '菜单标题']
+  previewSwapping.value = true
+  previewTargetIndex.value = index
+  const commitSwap = () => {
+    activePreviewId.value = incomingId
+    const nextCards = [...previewCardIds.value]
+    nextCards[index] = outgoingId
+    previewCardIds.value = nextCards
   }
-]
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  const topImage = showcaseImage.value
+  const cardImage = previewImageElements.value[index]
+  if (reduceMotion || !topImage || !cardImage || typeof topImage.animate !== 'function') {
+    commitSwap()
+    await nextTick()
+    previewSwapping.value = false
+    previewTargetIndex.value = -1
+    return
+  }
 
-const backendTech = [
-  { name: 'Go', desc: '1.23+', icon: 'Code', iconName: 'Cpu', gradient: 'linear-gradient(135deg, #00ADD8, #005f73)' },
-  { name: 'Gin', desc: 'Web 框架', icon: 'Server', iconName: 'Cpu', gradient: 'linear-gradient(135deg, #0091EA, #0056b3)' },
-  { name: 'MySQL', desc: '数据存储', icon: 'Database', iconName: 'DataAnalysis', gradient: 'linear-gradient(135deg, #4479A1, #2c5270)' },
-  { name: 'Redis', desc: '缓存/队列', icon: 'Cpu', iconName: 'Cpu', gradient: 'linear-gradient(135deg, #DC382D, #9b2c2c)' }
-]
+  const topRect = topImage.getBoundingClientRect()
+  const cardRect = cardImage.getBoundingClientRect()
+  const outgoingFlight = createPreviewFlight(topImage, topRect, 102)
+  const incomingFlight = createPreviewFlight(cardImage, cardRect, 101)
+  hiddenPreviewIds.value = [outgoingId, incomingId]
+  await nextTick()
+  let swapCommitted = false
 
-const frontendTech = [
-  { name: 'Vue 3', desc: '3.4+', icon: 'Monitor', iconName: 'Monitor', gradient: 'linear-gradient(135deg, #42B883, #2d7a55)' },
-  { name: 'Element Plus', desc: '2.7+', icon: 'Grid', iconName: 'Grid', gradient: 'linear-gradient(135deg, #409EFF, #2b6cb0)' },
-  { name: 'Vite', desc: '5.3+', icon: 'Vite', iconName: 'Cpu', gradient: 'linear-gradient(135deg, #646CFF, #4338ca)' },
-  { name: 'TypeScript', desc: '类型安全', icon: 'TS', iconName: 'Cpu', gradient: 'linear-gradient(135deg, #3178C6, #1e4a7a)' }
-]
-
-const codeExamples = {
-  backend: `# 克隆项目
-git clone https://github.com/wannanbigpig/gin-layout.git
-cd gin-layout
-
-# 安装依赖
-go mod tidy
-
-# 执行数据库迁移
-migrate -database 'mysql://...' -path data/migrations up
-
-# 配置 config.yaml（MySQL、Redis、JWT）
-
-# 启动服务
-go run main.go service
-
-# 访问 http://localhost:9001/ping`,
-  frontend: `# 克隆项目
-git clone https://github.com/wannanbigpig/go-admin-ui.git
-cd go-admin-ui
-
-# 安装依赖
-npm install
-
-# 启动开发服务器
-npm run dev
-
-# 构建生产版本
-npm run build:production`
-}
-
-const codeTitles = {
-  backend: 'terminal — backend',
-  frontend: 'terminal — frontend'
-}
-
-const highlightedCode = computed(() => {
-  const code = codeExamples[activeTab.value]
-  // 先处理 URL，避免其他关键字匹配干扰
-  let result = code.replace(/(https?:\/\/[^\s]+)/g, '<span class="code-url">$1</span>')
-  // 处理注释
-  result = result.replace(/(#.*)/g, '<span class="code-comment">$1</span>')
-  // 处理命令关键字（只在行首或空格后匹配）
-  result = result.replace(/(^|\s)(git|go|npm|docker|cd)(\s)/gm, '$1<span class="code-command">$2</span>$3')
-  return result
-})
-
-const copyCode = () => {
-  navigator.clipboard.writeText(codeExamples[activeTab.value])
-}
-
-const scrollTo = (id) => {
-  const element = document.getElementById(id)
-  if (element) {
-    const headerOffset = 70
-    const elementPosition = element.getBoundingClientRect().top
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset
-    window.scrollTo({ top: offsetPosition, behavior: 'smooth' })
+  try {
+    await animatePreviewFlight(outgoingFlight, topRect, cardRect, 'down').finished
+    commitSwap()
+    await nextTick()
+    swapCommitted = true
+    hiddenPreviewIds.value = [incomingId]
+    await nextTick()
+    outgoingFlight.remove()
+    previewFlightNodes.delete(outgoingFlight)
+    await new Promise((resolve) => window.setTimeout(resolve, 55))
+    await animatePreviewFlight(incomingFlight, cardRect, topRect, 'up').finished
+    hiddenPreviewIds.value = []
+    await nextTick()
+    await incomingFlight.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 110, easing: 'ease-out', fill: 'forwards' }).finished
+  } finally {
+    if (!swapCommitted) {
+      commitSwap()
+      await nextTick()
+    }
+    hiddenPreviewIds.value = []
+    previewSwapping.value = false
+    previewTargetIndex.value = -1
+    previewFlightNodes.forEach((node) => node.remove())
+    previewFlightNodes.clear()
   }
 }
-
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 50
+async function copyText(value, key) {
+  try {
+    await navigator.clipboard.writeText(value)
+    copiedKey.value = key
+    window.clearTimeout(copyTimer)
+    copyTimer = window.setTimeout(() => (copiedKey.value = ''), 1600)
+  } catch { copiedKey.value = '' }
 }
+function focusApiSearch(event) {
+  if (event.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName)) { event.preventDefault(); document.querySelector('.api-search input')?.focus() }
+}
+function initMotion() {
+  const shell = siteShell.value
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  if (!shell || reduceMotion) return
 
+  const revealItems = shell.querySelectorAll('[data-reveal]')
+  if ('IntersectionObserver' in window) {
+    revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        entry.target.classList.add('is-visible')
+        revealObserver?.unobserve(entry.target)
+      })
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 })
+    revealItems.forEach((item) => revealObserver.observe(item))
+    shell.classList.add('motion-ready')
+  }
+
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return
+  window.addEventListener('pointermove', handlePointerMove, { passive: true })
+  window.addEventListener('pointerleave', resetPointerMotion)
+}
+function handlePointerMove(event) {
+  pointerPosition = { x: event.clientX, y: event.clientY }
+  if (pointerFrame) return
+  pointerFrame = window.requestAnimationFrame(() => {
+    const shell = siteShell.value
+    if (!shell || !pointerPosition) return
+    const xRatio = pointerPosition.x / window.innerWidth
+    const yRatio = pointerPosition.y / window.innerHeight
+    shell.style.setProperty('--pointer-x', `${(xRatio * 100).toFixed(2)}%`)
+    shell.style.setProperty('--pointer-y', `${(yRatio * 100).toFixed(2)}%`)
+    shell.style.setProperty('--parallax-x', `${((xRatio - 0.5) * 24).toFixed(2)}px`)
+    shell.style.setProperty('--parallax-y', `${((yRatio - 0.5) * 18).toFixed(2)}px`)
+    shell.style.setProperty('--tilt-x', `${((0.5 - yRatio) * 2.2).toFixed(2)}deg`)
+    shell.style.setProperty('--tilt-y', `${((xRatio - 0.5) * 2.8).toFixed(2)}deg`)
+    pointerFrame = undefined
+  })
+}
+function resetPointerMotion() {
+  const shell = siteShell.value
+  shell?.style.setProperty('--parallax-x', '0px')
+  shell?.style.setProperty('--parallax-y', '0px')
+  shell?.style.setProperty('--tilt-x', '0deg')
+  shell?.style.setProperty('--tilt-y', '0deg')
+}
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-  initTheme()
+  window.addEventListener('keydown', focusApiSearch)
+  loadGithubStars()
+  initMotion()
 })
-
 onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
+  window.removeEventListener('keydown', focusApiSearch)
+  githubStarsController?.abort()
+  window.removeEventListener('pointermove', handlePointerMove)
+  window.removeEventListener('pointerleave', resetPointerMotion)
+  window.clearTimeout(copyTimer)
+  if (pointerFrame) window.cancelAnimationFrame(pointerFrame)
+  previewFlightNodes.forEach((node) => node.remove())
+  previewFlightNodes.clear()
+  revealObserver?.disconnect()
 })
 </script>
-
-<style scoped>
-/* ========== CSS 变量 ========== */
-.website {
-  --color-bg: #0a0a0f;
-  --color-bg-rgb: 10, 10, 15;
-  --color-bg-secondary: #12121a;
-  --color-bg-card: #1a1a25;
-  --color-text: #ffffff;
-  --color-text-secondary: #a0a0b0;
-  --color-text-muted: #6b6b80;
-  --color-primary: #6366f1;
-  --color-primary-light: #818cf8;
-  --color-accent: #22d3ee;
-  --color-success: #10b981;
-  --color-border: #2a2a3a;
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
-  --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.5);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  background: var(--color-bg);
-  color: var(--color-text);
-  overflow-x: hidden;
-  width: 100%;
-  min-width: 320px;
-}
-
-/* ========== 容器 ========== */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.container-full {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 60px;
-}
-
-.section-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 16px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(34, 211, 238, 0.2));
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  font-size: 13px;
-  color: var(--color-primary-light);
-  margin-bottom: 16px;
-}
-
-.section-title {
-  font-size: clamp(28px, 5vw, 42px);
-  font-weight: 700;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, #fff, #a0a0b0);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.section-desc {
-  font-size: 16px;
-  color: var(--color-text-secondary);
-  max-width: 500px;
-  margin: 0 auto;
-}
-
-/* ========== 按钮 ========== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 6px 16px;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  text-decoration: none;
-  transition: all 0.3s;
-  cursor: pointer;
-  border: none;
-  white-space: nowrap;
-  height: 36px;
-  text-align: center;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
-  color: white;
-  box-shadow: 0 2px 10px rgba(99, 102, 241, 0.4);
-  min-width: 100px;
-}
-
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.5);
-}
-
-.btn-secondary {
-  background: var(--color-bg-card);
-  color: var(--color-text);
-  border: 1px solid var(--color-border);
-  min-width: 100px;
-}
-
-.btn-secondary:hover {
-  background: var(--color-bg-secondary);
-  border-color: var(--color-primary);
-}
-
-.btn-large {
-  padding: 8px 20px;
-  font-size: 14px;
-  height: 40px;
-}
-
-.btn-large svg {
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-.btn-large span {
-  text-align: center;
-  flex: 1;
-}
-
-/* ========== 导航栏 ========== */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  padding: 20px 0;
-  transition: all 0.3s;
-  width: 100%;
-}
-
-.navbar.scrolled {
-  background: rgba(var(--color-bg-rgb), 0.95);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--color-border);
-  padding: 12px 0;
-}
-
-.nav-container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.logo-img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-}
-
-.logo-text {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--color-text);
-  white-space: nowrap;
-}
-
-.nav-links {
-  display: flex;
-  gap: 8px;
-}
-
-.nav-link {
-  padding: 10px 20px;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  border-radius: var(--radius-sm);
-  transition: all 0.3s;
-  cursor: pointer;
-  background: transparent;
-  border: none;
-  font-size: 15px;
-  white-space: nowrap;
-}
-
-.nav-link:hover {
-  color: var(--color-text);
-  background: var(--color-bg-card);
-}
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  flex-shrink: 0;
-}
-
-/* 主题切换器 */
-.theme-switcher {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.theme-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: transparent;
-  color: var(--color-text-secondary);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.3s;
-  padding: 0;
-}
-
-.theme-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-.theme-btn:hover {
-  color: var(--color-text);
-  background: var(--color-bg-secondary);
-}
-
-.theme-btn.active {
-  color: var(--color-primary);
-  background: var(--color-bg-secondary);
-}
-
-.github-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
-  color: var(--color-text);
-  text-decoration: none;
-  transition: all 0.3s;
-  white-space: nowrap;
-  height: 42px;
-}
-
-.github-btn:hover {
-  background: var(--color-bg-secondary);
-}
-
-.github-icon {
-  width: 20px;
-  height: 20px;
-}
-
-.mobile-menu-btn {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  padding: 8px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.mobile-menu-btn span {
-  width: 24px;
-  height: 2px;
-  background: var(--color-text);
-  transition: all 0.3s;
-}
-
-.mobile-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
-  padding: 16px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.mobile-nav-link {
-  padding: 14px 16px;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-  border-radius: var(--radius-sm);
-  transition: all 0.3s;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.mobile-nav-link:hover {
-  color: var(--color-text);
-  background: var(--color-bg-card);
-}
-
-.github-mobile svg {
-  width: 20px;
-  height: 20px;
-}
-
-.slide-enter-active,
-.slide-leave-active {
-  transition: all 0.3s ease;
-}
-
-.slide-enter-from,
-.slide-leave-to {
-  opacity: 0;
-  transform: translateY(-10px);
-}
-
-/* ========== Hero 区域 ========== */
-.hero {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding: 100px 20px 60px;
-  overflow: hidden;
-  width: 100%;
-}
-
-.hero-bg {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  width: 100%;
-  height: 100%;
-}
-
-.gradient-orb {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.5;
-  animation: float 20s infinite ease-in-out;
-}
-
-.orb-1 {
-  width: 400px;
-  height: 400px;
-  background: radial-gradient(circle, var(--color-primary) 0%, transparent 70%);
-  top: -200px;
-  left: -100px;
-}
-
-.orb-2 {
-  width: 300px;
-  height: 300px;
-  background: radial-gradient(circle, var(--color-accent) 0%, transparent 70%);
-  bottom: -100px;
-  right: -50px;
-  animation-delay: -7s;
-}
-
-.orb-3 {
-  width: 200px;
-  height: 200px;
-  background: radial-gradient(circle, #a855f7 0%, transparent 70%);
-  top: 50%;
-  right: 20%;
-  animation-delay: -14s;
-}
-
-@keyframes float {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  25% { transform: translate(30px, -30px) scale(1.1); }
-  50% { transform: translate(-20px, 20px) scale(0.9); }
-  75% { transform: translate(20px, 30px) scale(1.05); }
-}
-
-.grid-overlay {
-  position: absolute;
-  inset: 0;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 60px 60px;
-  width: 100%;
-  height: 100%;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 10;
-  text-align: center;
-  max-width: 900px;
-  width: 100%;
-  padding: 0 10px;
-}
-
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: 20px;
-  font-size: 13px;
-  color: var(--color-text-secondary);
-  margin-bottom: 24px;
-}
-
-.badge-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--color-success);
-  border-radius: 50%;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.2); }
-}
-
-.hero-title {
-  font-size: clamp(32px, 8vw, 64px);
-  font-weight: 800;
-  line-height: 1.1;
-  margin-bottom: 20px;
-}
-
-.title-line {
-  display: block;
-  background: linear-gradient(135deg, #fff 0%, #a0a0b0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.title-line.highlight {
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.hero-description {
-  font-size: clamp(15px, 3vw, 17px);
-  line-height: 1.7;
-  color: var(--color-text-secondary);
-  max-width: 600px;
-  margin: 0 auto 32px;
-}
-
-.hero-cta {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 40px;
-}
-
-.btn-arrow {
-  width: 18px;
-  height: 18px;
-  transition: transform 0.3s;
-}
-
-.btn-primary:hover .btn-arrow {
-  transform: translateX(4px);
-}
-
-.btn-github {
-  width: 20px;
-  height: 20px;
-}
-
-.hero-stats {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 24px;
-  flex-wrap: wrap;
-}
-
-.stat {
-  text-align: center;
-}
-
-.stat-value {
-  font-size: 28px;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--color-primary-light), var(--color-accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.stat-label {
-  font-size: 13px;
-  color: var(--color-text-muted);
-  margin-top: 4px;
-}
-
-.stat-divider {
-  width: 1px;
-  height: 40px;
-  background: var(--color-border);
-}
-
-.hero-scroll {
-  position: absolute;
-  bottom: 30px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: var(--color-text-muted);
-  font-size: 13px;
-}
-
-.scroll-indicator {
-  width: 24px;
-  height: 40px;
-  border: 2px solid var(--color-border);
-  border-radius: 12px;
-  position: relative;
-}
-
-.scroll-indicator::after {
-  content: '';
-  position: absolute;
-  top: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 8px;
-  background: var(--color-text-muted);
-  border-radius: 2px;
-  animation: scroll 2s infinite;
-}
-
-@keyframes scroll {
-  0%, 100% { opacity: 1; top: 8px; }
-  50% { opacity: 0.3; top: 16px; }
-}
-
-/* ========== 特性区域 ========== */
-.features {
-  padding: 80px 0;
-  background: var(--color-bg-secondary);
-  width: 100%;
-}
-
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.feature-card {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 28px;
-  transition: all 0.3s;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-.feature-card:hover {
-  border-color: var(--color-primary);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-}
-
-.feature-icon-wrapper {
-  position: relative;
-  width: 56px;
-  height: 56px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.feature-icon-bg {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(34, 211, 238, 0.3));
-  border-radius: var(--radius-md);
-  transform: rotate(45deg);
-}
-
-.feature-icon {
-  position: relative;
-  color: var(--color-primary-light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.feature-title {
-  font-size: 19px;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.feature-desc {
-  font-size: 14px;
-  color: var(--color-text-secondary);
-  margin-bottom: 16px;
-}
-
-.feature-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: auto;
-}
-
-.feature-list li {
-  padding: 6px 12px;
-  background: var(--color-bg-secondary);
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
-/* ========== 技术架构 ========== */
-.architecture {
-  padding: 80px 0;
-  background: var(--color-bg);
-  width: 100%;
-}
-
-.tech-showcase {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 40px;
-}
-
-.tech-category-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  margin-bottom: 20px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.tech-items {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.tech-item {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  transition: all 0.3s;
-}
-
-.tech-item:hover {
-  border-color: var(--color-primary);
-  transform: translateX(4px);
-}
-
-.tech-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-sm);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.tech-logo .el-icon {
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tech-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.tech-name {
-  font-weight: 600;
-  color: var(--color-text);
-  white-space: nowrap;
-}
-
-.tech-desc {
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
-/* ========== 快速开始 ========== */
-.quickstart {
-  padding: 80px 0;
-  background: var(--color-bg-secondary);
-  width: 100%;
-}
-
-.code-showcase {
-  max-width: 750px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.code-tabs {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  flex-wrap: wrap;
-}
-
-.code-tab {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  color: var(--color-text-secondary);
-  cursor: pointer;
-  transition: all 0.3s;
-  white-space: nowrap;
-}
-
-.code-tab.active {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  color: white;
-}
-
-.tab-icon {
-  font-size: 16px;
-}
-
-.code-content {
-  background: var(--color-bg-card);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  width: 100%;
-}
-
-.code-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  background: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.code-dots {
-  display: flex;
-  gap: 6px;
-}
-
-.dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-}
-
-.dot.red { background: #ff5f56; }
-.dot.yellow { background: #ffbd2e; }
-.dot.green { background: #27ca40; }
-
-.code-title {
-  font-size: 13px;
-  color: var(--color-text-muted);
-  flex: 1;
-}
-
-.copy-btn {
-  padding: 6px;
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted);
-  cursor: pointer;
-  transition: color 0.3s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.copy-btn:hover {
-  color: var(--color-text);
-}
-
-.copy-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-.code-block {
-  padding: 20px;
-  overflow-x: auto;
-  margin: 0;
-  width: 100%;
-}
-
-.code-block code {
-  font-family: 'Fira Code', 'JetBrains Mono', monospace;
-  font-size: 13px;
-  line-height: 1.8;
-  color: var(--color-text);
-  white-space: pre;
-}
-
-.code-comment { color: var(--color-text-muted); }
-.code-command { color: var(--color-primary); }
-.code-url { color: var(--color-success); text-decoration: underline; }
-
-/* ========== 演示区域 ========== */
-.demo {
-  padding: 60px 0;
-  background: var(--color-bg);
-  width: 100%;
-}
-
-.demo-wrapper {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 50px;
-  align-items: center;
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-}
-
-.demo-content {
-  width: 100%;
-}
-
-.demo-content .section-tag,
-.demo-content .section-title,
-.demo-content .section-desc {
-  text-align: center;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.demo-credentials {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  margin: 24px 0;
-  width: 100%;
-}
-
-.credential-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.credential-item:last-child {
-  border-bottom: none;
-  padding-bottom: 0;
-}
-
-.credential-item:first-child {
-  padding-top: 0;
-}
-
-.credential-label {
-  font-size: 14px;
-  color: var(--color-text-muted);
-}
-
-.credential-value {
-  font-size: 14px;
-  color: var(--color-text);
-}
-
-.credential-value.link {
-  color: var(--color-primary-light);
-  text-decoration: none;
-}
-
-.credential-value code {
-  background: var(--color-bg-secondary);
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
-  font-family: 'Fira Code', monospace;
-}
-
-.preview-mockup {
-  background: var(--color-bg-card);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  width: 100%;
-}
-
-.mockup-header {
-  padding: 12px 16px;
-  background: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.mockup-dots {
-  display: flex;
-  gap: 6px;
-}
-
-.mockup-dots .dot {
-  background: var(--color-text-muted);
-}
-
-.mockup-content {
-  display: flex;
-  height: 380px;
-}
-
-.mockup-sidebar {
-  width: 70px;
-  background: var(--color-bg-secondary);
-  border-right: 1px solid var(--color-border);
-}
-
-.mockup-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.mockup-topbar {
-  height: 45px;
-  background: var(--color-bg-secondary);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.mockup-body {
-  flex: 1;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.mockup-card {
-  flex: 1;
-  background: var(--color-bg-card);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
-}
-
-/* ========== 页脚 ========== */
-.footer {
-  padding: 50px 0 24px;
-  background: var(--color-bg-secondary);
-  border-top: 1px solid var(--color-border);
-  width: 100%;
-}
-
-.footer-content {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 40px;
-  margin-bottom: 40px;
-}
-
-.footer-logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.footer-logo .logo-img {
-  width: 32px;
-  height: 32px;
-}
-
-.footer-logo span {
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.footer-desc {
-  font-size: 14px;
-  color: var(--color-text-muted);
-}
-
-.footer-links {
-  display: flex;
-  gap: 60px;
-}
-
-.footer-column h5 {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--color-text);
-  margin-bottom: 16px;
-}
-
-.footer-column a {
-  display: block;
-  padding: 6px 0;
-  color: var(--color-text-muted);
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s;
-}
-
-.footer-column a:hover {
-  color: var(--color-primary-light);
-}
-
-.footer-bottom {
-  padding-top: 30px;
-  border-top: 1px solid var(--color-border);
-  text-align: center;
-}
-
-.footer-bottom p {
-  font-size: 13px;
-  color: var(--color-text-muted);
-}
-
-/* ========== 响应式 ========== */
-@media (max-width: 1024px) {
-  .demo-wrapper {
-    grid-template-columns: 1fr;
-    gap: 40px;
-  }
-  
-  .demo-content .section-header {
-    text-align: center;
-  }
-  
-  .demo-content .section-tag,
-  .demo-content .section-title,
-  .demo-content .section-desc {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-@media (max-width: 768px) {
-  .desktop-nav,
-  .github-btn.desktop-only,
-  .desktop-only {
-    display: none !important;
-  }
-  
-  .mobile-menu-btn {
-    display: flex;
-  }
-  
-  .navbar {
-    padding: 16px 0;
-  }
-  
-  .nav-container {
-    padding: 0 16px;
-  }
-  
-  .hero {
-    padding: 80px 0 50px;
-  }
-  
-  .hero-content {
-    padding: 0 16px;
-    width: 100%;
-  }
-  
-  .hero-cta {
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-    padding: 0 16px;
-  }
-  
-  .hero-cta .btn {
-    width: 100%;
-    justify-content: center;
-  }
-  
-  .hero-stats {
-    gap: 16px;
-    padding: 0 16px;
-  }
-  
-  .stat-divider {
-    display: none;
-  }
-  
-  .features {
-    padding: 60px 0;
-  }
-  
-  .features-grid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .feature-card {
-    padding: 24px;
-  }
-  
-  .tech-showcase {
-    grid-template-columns: 1fr;
-    gap: 24px;
-  }
-  
-  .code-tabs {
-    justify-content: center;
-  }
-  
-  .code-block {
-    padding: 16px;
-    font-size: 12px;
-  }
-  
-  .footer-content {
-    flex-direction: column;
-    gap: 30px;
-  }
-  
-  .footer-links {
-    gap: 40px;
-    justify-content: center;
-    width: 100%;
-  }
-  
-  .container {
-    padding: 0 16px;
-  }
-  
-  .demo-wrapper {
-    grid-template-columns: 1fr;
-    gap: 40px;
-    padding: 0 16px;
-  }
-  
-  .demo-content .section-tag,
-  .demo-content .section-title,
-  .demo-content .section-desc {
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .demo-credentials {
-    padding: 16px;
-  }
-  
-  .btn-large {
-    width: 100%;
-    max-width: 240px;
-    margin: 0 auto;
-    display: flex;
-  }
-}
-
-@media (max-width: 480px) {
-  .section-title {
-    font-size: 24px;
-  }
-  
-  .hero-title {
-    font-size: 28px;
-  }
-  
-  .hero-description {
-    font-size: 14px;
-  }
-  
-  .feature-card {
-    padding: 20px;
-  }
-  
-  .code-tab {
-    padding: 10px 16px;
-    font-size: 13px;
-  }
-  
-  .hero-content,
-  .hero-cta,
-  .hero-stats,
-  .container,
-  .demo-wrapper {
-    padding-left: 12px;
-    padding-right: 12px;
-  }
-}
-</style>
