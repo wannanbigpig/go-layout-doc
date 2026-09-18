@@ -14,6 +14,10 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'static',
     rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        docs: resolve(__dirname, 'docs/index.html')
+      },
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules/element-plus')) {

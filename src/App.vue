@@ -8,6 +8,7 @@
         </a>
         <nav :class="['main-nav', { open: mobileMenuOpen }]" aria-label="主导航">
           <a v-for="item in navItems" :key="item.id" :href="`#${item.id}`" @click="closeMenu">{{ item.label }}</a>
+          <a href="/docs/" @click="closeMenu">教程文档</a>
         </nav>
         <div class="header-actions">
           <a
@@ -39,7 +40,7 @@
             <p class="hero-lead">集成认证权限、动态菜单、文件中心、日志审计与任务调度。保留清晰的工程边界，让你从业务开发开始，而不是重复搭建后台底座。</p>
             <div class="hero-actions">
               <a class="button button-primary" href="#quickstart">快速开始<svg viewBox="0 0 18 18" aria-hidden="true"><path d="M3 9h11M10 5l4 4-4 4" /></svg></a>
-              <a class="button button-secondary" href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">查看源码</a>
+              <a class="button button-secondary" href="/docs/">教程文档</a>
             </div>
             <div class="hero-meta">
               <span><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2v16M2 10h16" /></svg>MIT License</span>
@@ -263,10 +264,10 @@
         </div>
       </section>
 
-      <section class="closing-section"><div class="container closing-content" data-reveal><div><span class="eyebrow">OPEN SOURCE · MIT</span><h2>从可靠的基础开始，<br />专注构建你的业务。</h2><p>后端 Gin Layout 与前端 X-L-Admin 配套使用，也可以按自己的技术选型独立接入。</p></div><div class="closing-actions"><a class="button button-white" href="#quickstart">开始使用</a><a class="button button-outline" href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">GitHub 仓库</a></div></div></section>
+      <section class="closing-section"><div class="container closing-content" data-reveal><div><span class="eyebrow">OPEN SOURCE · MIT</span><h2>从可靠的基础开始，<br />专注构建你的业务。</h2><p>后端 Gin Layout 与前端 X-L-Admin 配套使用，也可以按自己的技术选型独立接入。</p></div><div class="closing-actions"><a class="button button-white" href="/docs/">阅读教程</a><a class="button button-outline" href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">GitHub 仓库</a></div></div></section>
     </main>
 
-    <footer class="site-footer"><div class="container footer-layout"><div><a class="brand footer-brand" href="#top"><img class="brand-mark" src="/gin-layout-mark.svg" alt="" /><span>Gin Layout</span></a><p>面向真实后台业务的 Go 工程骨架。</p></div><div class="footer-links"><a href="#preview">产品预览</a><a href="#quickstart">快速开始</a><a href="#api">API 目录</a><a href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">后端仓库</a><a href="https://github.com/wannanbigpig/go-admin-ui" target="_blank" rel="noreferrer">前端仓库</a></div><small>© 2026 Gin Layout · MIT License</small></div></footer>
+    <footer class="site-footer"><div class="container footer-layout"><div><a class="brand footer-brand" href="#top"><img class="brand-mark" src="/gin-layout-mark.svg" alt="" /><span>Gin Layout</span></a><p>面向真实后台业务的 Go 工程骨架。</p></div><div class="footer-links"><a href="/docs/">教程文档</a><a href="#preview">产品预览</a><a href="#quickstart">快速开始</a><a href="#api">API 目录</a><a href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">后端仓库</a><a href="https://github.com/wannanbigpig/go-admin-ui" target="_blank" rel="noreferrer">前端仓库</a></div><small>© 2026 Gin Layout · MIT License</small></div></footer>
   </div>
 </template>
 
