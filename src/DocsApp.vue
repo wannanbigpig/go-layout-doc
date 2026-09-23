@@ -80,6 +80,7 @@
 <script setup>
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { marked } from 'marked'
+import DOMPurify from 'dompurify'
 import overviewMarkdown from '../docs/README.md?raw'
 import permissionsMarkdown from '../docs/permissions.md?raw'
 import systemConfigMarkdown from '../docs/system-config.md?raw'
@@ -142,7 +143,9 @@ function extractOutline(markdown) {
 function renderMarkdown(markdown, headings) {
   let headingIndex = 0
   const html = marked.parse(markdown, { gfm: true })
-  return html
+  const sanitized = DOMPurify.sanitize(html)
+
+  return sanitized
     .replace(/<h([23])>([\s\S]*?)<\/h\1>/g, (matched, level, content) => {
       const heading = headings[headingIndex++]
       return heading ? `<h${level} id="${heading.id}">${content}<a class="heading-anchor" href="#${heading.id}" aria-label="链接到本节">#</a></h${level}>` : matched

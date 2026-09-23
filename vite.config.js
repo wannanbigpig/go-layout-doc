@@ -20,9 +20,6 @@ export default defineConfig({
       },
       output: {
         manualChunks: (id) => {
-          if (id.includes('node_modules/element-plus')) {
-            return 'element-plus'
-          }
           if (id.includes('node_modules/vue')) {
             return 'vue'
           }

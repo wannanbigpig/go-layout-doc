@@ -28,6 +28,7 @@ export const apiGroups = [
   '文件中心',
   '通知导出',
   '存储',
+  '短信服务',
   '日志审计',
   '任务中心'
 ]
@@ -40,6 +41,9 @@ export const apiCatalog = [
   ...api('认证会话', '/admin/v1', '公开', [
     ['GET', 'login-captcha', '获取登录验证码'],
     ['POST', 'login', '登录', '换取 access token 并建立 refresh 会话'],
+    ['GET', 'login/options', '登录方式', '获取当前启用的登录方式'],
+    ['POST', 'login/sms/send-code', '发送短信登录验证码', '向管理员手机号发送验证码'],
+    ['POST', 'login/sms', '短信验证码登录', '通过手机号与短信验证码登录换取 token'],
     ['GET', 'file/:uuid', '获取公开文件']
   ]),
   ...api('认证会话', '/admin/v1/auth', 'Refresh Cookie', [
@@ -65,6 +69,16 @@ export const apiCatalog = [
     ['GET', 'user-menu-info', '获取用户权限信息'],
     ['POST', 'update-profile', '更新个人资料'],
     ['POST', 'avatar/upload', '上传头像']
+  ]),
+  ...api('个人中心', '/admin/v1/todo', 'Access Token', [
+    ['GET', 'list', '我的待办列表', '查询分配给当前用户的待办事项'],
+    ['GET', 'summary', '我的待办摘要', '统计个人待办状态分布'],
+    ['GET', 'reminder-preference', '待办提醒偏好', '获取个人待办通知偏好配置'],
+    ['POST', 'create', '创建个人待办', '新增待办事项'],
+    ['POST', 'update', '更新个人待办', '修改待办内容、优先级或截止时间'],
+    ['POST', 'status', '更新待办状态', '流转待办状态（待办/进行中/完成/取消）'],
+    ['POST', 'delete', '删除个人待办', '删除指定待办事项'],
+    ['POST', 'reminder-preference', '更新待办提醒偏好', '修改是否启用提醒及提前提醒分钟数']
   ]),
   ...api('仪表盘', '/admin/v1/dashboard', '接口权限', [
     ['GET', 'overview', '仪表盘概览'],
@@ -181,7 +195,7 @@ export const apiCatalog = [
   ...api('通知导出', '/admin/v1/system/notification', '接口权限', [
     ['POST', 'send', '发送系统通知']
   ]),
-  ...api('通知导出', '/admin/v1/system/export', '接口权限', [
+  ...api('通知导出', '/admin/v1/system/export', 'Access Token', [
     ['GET', 'list', '导出记录列表'],
     ['GET', 'detail', '导出记录详情']
   ]),
@@ -190,6 +204,11 @@ export const apiCatalog = [
     ['GET', 'secret', '查看存储敏感信息'],
     ['POST', 'config', '保存存储配置'],
     ['POST', 'test', '测试存储配置']
+  ]),
+  ...api('短信服务', '/admin/v1/system/sms', '接口权限', [
+    ['GET', 'config', '短信配置', '获取当前短信服务商及模板配置'],
+    ['POST', 'config', '保存短信配置', '保存短信渠道密钥与模板'],
+    ['POST', 'test', '测试短信发送', '使用草稿配置向测试手机号发送验证码']
   ]),
   ...api('日志审计', '/admin/v1/log/request', 'Access Token', [
     ['GET', 'self-list', '个人请求日志列表'],

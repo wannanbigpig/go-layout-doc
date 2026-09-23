@@ -267,7 +267,7 @@
       <section class="closing-section"><div class="container closing-content" data-reveal><div><span class="eyebrow">OPEN SOURCE · MIT</span><h2>从可靠的基础开始，<br />专注构建你的业务。</h2><p>后端 Gin Layout 与前端 X-L-Admin 配套使用，也可以按自己的技术选型独立接入。</p></div><div class="closing-actions"><a class="button button-white" href="/docs/">阅读教程</a><a class="button button-outline" href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">GitHub 仓库</a></div></div></section>
     </main>
 
-    <footer class="site-footer"><div class="container footer-layout"><div><a class="brand footer-brand" href="#top"><img class="brand-mark" src="/gin-layout-mark.svg" alt="" /><span>Gin Layout</span></a><p>面向真实后台业务的 Go 工程骨架。</p></div><div class="footer-links"><a href="/docs/">教程文档</a><a href="#preview">产品预览</a><a href="#quickstart">快速开始</a><a href="#api">API 目录</a><a href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">后端仓库</a><a href="https://github.com/wannanbigpig/go-admin-ui" target="_blank" rel="noreferrer">前端仓库</a></div><small>© 2026 Gin Layout · MIT License</small></div></footer>
+    <footer class="site-footer"><div class="container footer-layout"><div><a class="brand footer-brand" href="#top"><img class="brand-mark" src="/gin-layout-mark.svg" alt="" /><span>Gin Layout</span></a><p>面向真实后台业务的 Go 工程骨架。</p></div><div class="footer-links"><a href="/docs/">教程文档</a><a href="#preview">产品预览</a><a href="#quickstart">快速开始</a><a href="#api">API 目录</a><a href="https://github.com/wannanbigpig/gin-layout" target="_blank" rel="noreferrer">后端仓库</a><a href="https://github.com/wannanbigpig/go-admin-ui" target="_blank" rel="noreferrer">前端仓库</a></div><small>© {{ currentYear }} Gin Layout · MIT License</small></div></footer>
   </div>
 </template>
 
@@ -275,13 +275,14 @@
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
 import { apiCatalog, apiGroups, authDescription } from './data/api-catalog'
 
+const currentYear = new Date().getFullYear()
 const mobileMenuOpen = ref(false)
 const githubStars = ref(158)
 const siteShell = ref(null)
 const showcaseImage = ref(null)
 const previewImageElements = ref([])
 const activePreviewId = ref('workspace')
-const previewCardIds = ref(['permissions', 'audit', 'permissions-wide'])
+const previewCardIds = ref(['permissions', 'audit', 'api-catalog'])
 const hiddenPreviewIds = ref([])
 const previewSwapping = ref(false)
 const previewTargetIndex = ref(-1)
@@ -354,7 +355,7 @@ const previewSlides = [
   { id: 'permissions', image: '/screenshots/x-l-admin-super-admin-users.jpg', alt: '超级管理员用户与权限管理截图', label: '权限与组织管理', title: '动态菜单与权限', description: '管理员、部门、角色、菜单和接口权限形成完整的后台授权链路。' },
   { id: 'workspace', image: '/screenshots/x-l-admin-super-admin-home.jpg', alt: '超级管理员工作台截图', label: '超级管理员工作台', title: '角色化工作台', description: '根据当前用户展示快捷入口、登录信息与可访问的运营数据。' },
   { id: 'audit', image: '/screenshots/x-l-admin-super-admin-logs.jpg', alt: '超级管理员请求日志截图', label: '请求日志与风险标记', title: '审计与风险标记', description: '集中展示最近操作、风险级别与数据变更，便于日常追溯。' },
-  { id: 'permissions-wide', image: '/screenshots/x-l-admin-super-admin-wide-users.png', alt: '超级管理员全宽权限管理截图', label: '全宽权限管理', title: '完整数据视图', description: '在宽屏布局中完整展示筛选、权限数据和操作列，适合复杂管理场景。' }
+  { id: 'api-catalog', image: '/screenshots/x-l-admin-super-admin-api-list.png', alt: '超级管理员接口权限列表截图，展示筛选、鉴权模式与操作列', label: '接口权限目录', title: '完整数据视图', description: '在宽屏布局中完整展示筛选、接口权限、鉴权模式和操作列，适合复杂管理场景。' }
 ]
 const previewSlideMap = new Map(previewSlides.map((slide) => [slide.id, slide]))
 
