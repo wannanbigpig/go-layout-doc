@@ -1,6 +1,7 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { useAPIVersions } from '../src/api-versions.js'
+import bundledSource from '../src/data/api-source.json' with { type: 'json' }
 
 const range = { min: '0.10.0', maxExclusive: '0.12.0' }
 const releases = (...tags) => tags.map((tag) => ({ tag, version: tag.slice(1) }))
@@ -71,14 +72,14 @@ test('unknown or unavailable version never displays another version catalog', as
   assert.equal(new URL(f.location.href).searchParams.get('apiVersion'), 'v0.11.0')
 })
 
-test('failed discovery retains a labeled bundled candidate but cannot validate an explicit tag', async () => {
+test('failed discovery retains the bundled source identity but cannot validate an explicit tag', async () => {
   for (const pinned of [false, true]) {
     const f = fixture(`https://docs.example/api/${pinned ? '?apiVersion=v0.10.0' : ''}`)
     f.client.list = async () => { throw new Error('版本查询受限') }
     await f.state.refresh()
     assert.match(f.state.discoveryError.value, /受限/)
     if (pinned) { assert.equal(f.state.documentation.value, null); assert.match(f.state.error.value, /无法核对/) }
-    else { assert.equal(f.state.selected.value, 'current'); assert.equal(f.state.source.value.state, 'development'); assert.ok(f.state.documentation.value) }
+    else { assert.equal(f.state.selected.value, 'current'); assert.deepEqual(f.state.source.value, bundledSource); assert.ok(f.state.documentation.value) }
   }
 })
 
