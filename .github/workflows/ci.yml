@@ -14,15 +14,50 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
           cache: npm
 
       - name: Install dependencies
         run: npm ci
 
       - name: Check API catalog vs OpenAPI snapshot
-        # 使用仓库内 docs/openapi.snapshot.yaml（不依赖跨仓 checkout）
+        run: npm run check:api -- --snapshot-only
+
+      - name: Read documented backend and admin tags
+        id: api-tags
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs'
+          const source = JSON.parse(fs.readFileSync('src/data/api-source.json', 'utf8'))
+          fs.appendFileSync(process.env.GITHUB_OUTPUT, `backend=${source.state === 'tagged' ? source.tag : ''}\nfrontend=${source.frontend.state === 'tagged' ? source.frontend.tag : ''}\n`)
+          NODE
+
+      - name: Checkout documented backend tag
+        if: steps.api-tags.outputs.backend != ''
+        uses: actions/checkout@v4
+        with:
+          repository: wannanbigpig/gin-layout
+          ref: ${{ steps.api-tags.outputs.backend }}
+          path: .api-sources/backend
+          fetch-depth: 0
+
+      - name: Checkout documented admin tag
+        if: steps.api-tags.outputs.frontend != ''
+        uses: actions/checkout@v4
+        with:
+          repository: wannanbigpig/go-admin-ui
+          ref: ${{ steps.api-tags.outputs.frontend }}
+          path: .api-sources/frontend
+          fetch-depth: 0
+
+      - name: Verify documents against actual release tags
+        if: steps.api-tags.outputs.backend != '' || steps.api-tags.outputs.frontend != ''
+        env:
+          BACKEND_ROOT: ${{ steps.api-tags.outputs.backend != '' && format('{0}/.api-sources/backend', github.workspace) || '' }}
+          FRONTEND_ROOT: ${{ steps.api-tags.outputs.frontend != '' && format('{0}/.api-sources/frontend', github.workspace) || '' }}
         run: npm run check:api
+
+      - run: npm test
 
       - name: Build
         run: npm run build

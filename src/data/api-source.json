@@ -1,0 +1,40 @@
+{
+  "backendVersion": "0.10.0",
+  "tag": "v0.10.0",
+  "commit": "e7b6710075dddac68dce6ee9310438d513052b33",
+  "dirty": false,
+  "state": "development",
+  "ref": "e7b6710075dddac68dce6ee9310438d513052b33",
+  "repository": "https://github.com/wannanbigpig/gin-layout",
+  "frontend": {
+    "version": "0.10.0",
+    "tag": "v0.10.0",
+    "commit": "22861ff41a3160ddfc3d2b908fd9e6cdfd05b441",
+    "dirty": false,
+    "state": "development",
+    "ref": "22861ff41a3160ddfc3d2b908fd9e6cdfd05b441",
+    "repository": "https://github.com/wannanbigpig/go-admin-ui",
+    "hashes": {
+      "package": "5d327a0a2a6569b97204e96f8b7728f3b5b677123728dd25e972467b69c6783c",
+      "release": "4c79a0ded3c14192928b39aebe2408b57b62166b21f0adcbb79c605402ac380a"
+    }
+  },
+  "compatibility": {
+    "frontend": {
+      "min": "0.10.0",
+      "maxExclusive": "0.11.0"
+    },
+    "backend": {
+      "min": "0.10.0",
+      "maxExclusive": "0.11.0"
+    }
+  },
+  "schemaCoverage": "routes-and-security",
+  "hashes": {
+    "documentation": "f86b05881617d53b43f72bbbdca7531c79256648f04264561191835ed4f6acaa",
+    "openapi": "d138aac146ac594a7504463b2fe9536c2c20b10e955b0a6ca1f56dd2a0b6eb1f",
+    "catalog": "686cd261abdebf71310b63b5acd34c176be8a652a23ce4da613a53dc2eb6eea7",
+    "errorCodes": "82169ff7d13601bed9a8d6864ab7a348b37137532b656a9d8202639370754413",
+    "upgradeGuide": "6dc6fa591afbacf955b15096b1603a076b3251c2835535dd26c8b2a0aaffea98"
+  }
+}

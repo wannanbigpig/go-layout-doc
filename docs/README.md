@@ -2,7 +2,7 @@
 
 这组文档面向正在把 Gin Layout 用到真实后台项目里的开发者。它不只列目录和接口，而是解释管理端要怎么配置、配置最终落到哪些表、后端代码如何读取，以及改完后怎样确认权限和运行时状态已经生效。
 
-> 文档以 `github.com/wannanbigpig/gin-layout` 当前 `master` 为事实来源。接口路径、字段和命令均按当前代码核对；部署到共享环境前，仍应结合目标版本的 Release Notes 与迁移状态确认。
+> 教程随官网文档更新，不维护独立版本。API 页面显示后端接口版本和配套管理后台 Tag；开发候选明确标示“待发布”。部署到共享环境前，仍应结合后端与管理端的 Release Notes、兼容范围和迁移状态确认。
 
 ## 推荐阅读路径
 
@@ -63,24 +63,49 @@ go mod verify
 make dev-up
 ```
 
-该命令会启动本地 MySQL、Redis 与 MinIO。只想手动准备依赖也可以，但要保证 `config.yaml` 指向真实可用的实例。
+该命令会启动本地 MySQL、Redis 与 MinIO。MinIO 控制台使用 `http://127.0.0.1:9002`，HTTP API 服务使用 `9001` 端口。只想手动准备依赖也可以，但要保证 `config.yaml` 指向真实可用的实例。
 
 ### 3. 准备配置并执行迁移
 
 ```bash
 cp config/config.yaml.example ./config.yaml
-
-go run main.go -c ./config.yaml command migrate check
-go run main.go -c ./config.yaml command migrate up
 ```
 
-至少检查以下配置：
+示例默认关闭 MySQL，必须先编辑 `config.yaml`。使用 `make dev-up` 的默认开发数据库时，连接配置为：
 
-- `mysql.*`：数据库地址、用户、密码和库名。
-- `redis.*`：Redis 地址与逻辑库。
+```yaml
+mysql:
+  enable: true
+  host: 127.0.0.1
+  port: 3306
+  database: gin_layout
+  username: gin_layout
+  password: gin_layout123
+```
+
+以上凭据仅对应本地开发依赖；自备数据库请替换为实际连接信息。再检查以下配置：
+
+- `redis.*`：启用 Redis 时设置 `redis.enable: true`，并核对地址与逻辑库。
 - `jwt.secret_key`：建议使用 32 字节随机值（Base64 通常约 44 个字符）。
 - `security.credential_encryption_key`：短信、对象存储等凭据的独立 32 字节随机主密钥，不能和 JWT 密钥复用。
 - `app.app_env`、`queue.namespace`：同一部署的 service、worker、cron 必须一致。
+
+示例配置已引用环境变量。分别生成两把密钥，保存到本地受保护的环境配置，并在启动各进程的终端中加载同一组值：
+
+```bash
+export JWT_SECRET_KEY="$(openssl rand -base64 32)"
+export CREDENTIAL_ENCRYPTION_KEY="$(openssl rand -base64 32)"
+```
+
+不要在每个终端或每次重启时重新生成密钥。配置完成后执行：
+
+```bash
+go run main.go -c ./config.yaml command migrate check
+go run main.go -c ./config.yaml command migrate up
+go run main.go -c ./config.yaml command api-route -y
+```
+
+首次安装也必须执行 `api-route`：迁移创建表和默认基础数据，该命令补齐 API 目录、默认菜单/API 绑定并同步权限。否则超级管理员可能可以登录，普通角色仍无法完成授权。
 
 ### 4. 启动进程
 
@@ -105,7 +130,7 @@ curl http://127.0.0.1:9001/health/readiness
 ```
 
 - `/ping` 用于确认 HTTP 进程存活。
-- `/health/readiness` 用于确认当前配置要求的 MySQL、Redis 等依赖已经就绪。
+- `/health/readiness` 必须返回 HTTP `200`、顶层 `ready: true`，且 `dependencies.mysql.ready: true`；已启用的 Redis、队列也必须就绪。若提示 `mysql is disabled`，检查 `mysql.enable`。仅 `/ping` 成功不能说明登录和业务接口可用。
 
 ## 登录与公共调用约定
 
@@ -143,7 +168,7 @@ Authorization: Bearer <access_token>
 很多“为什么菜单有了但接口还是 403”的问题，都来自配置顺序不完整。建议按以下顺序操作：
 
 1. **路由进入 Catalog**：后端代码声明接口路径与安全策略。
-2. **同步接口元数据**：路由变化后执行 `command api-route -y`。
+2. **同步接口元数据**：首次安装或路由变化后执行 `command api-route -y`。
 3. **菜单绑定接口**：菜单或按钮节点的 `api_list` 关联 API。
 4. **角色选择菜单**：角色的 `menu_list` 选择真实授权节点并设置数据范围。
 5. **用户或部门绑定角色**：最终权限会同步到 Casbin。

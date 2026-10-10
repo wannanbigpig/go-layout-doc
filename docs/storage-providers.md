@@ -27,7 +27,7 @@ type Driver interface {
 - `StatCapable`：读取服务端对象大小与 Content-Type。
 - `ImageThumbnailCapable`：生成供应商图片处理链接。
 
-调用方通过类型断言判断能力，不能用“不是 local”或具体驱动名称推断。
+运行时调用方通过类型断言判断能力；请求参数校验使用注册表的 `Capabilities` 声明，两者必须一致，不能用“不是 local”或具体驱动名称推断。
 
 ## DriverDefinition 与注册表
 
@@ -36,10 +36,17 @@ type Driver interface {
 ```go
 type DriverDefinition struct {
     Name            string
-    Build           DriverFactory
-    Validate        DriverConfigValidator
-    ResolveBucket   BucketResolver
+    Build           func(context.Context, Config) (Driver, error)
+    Validate        func(Config) error
+    ResolveBucket   func(Config, bool) string
+    Capabilities    DriverCapabilities
     SensitiveFields []SensitiveField
+}
+
+type DriverCapabilities struct {
+    DirectUpload    bool
+    MultipartUpload bool
+    ImageThumbnail  bool
 }
 ```
 
@@ -55,16 +62,13 @@ type DriverDefinition struct {
 
 ```go
 type ExampleConfig struct {
-    Endpoint        string `json:"endpoint"`
-    Region          string `json:"region"`
-    Bucket          string `json:"bucket"`
-    AccessKeyID     string `json:"access_key_id"`
-    AccessKeySecret string `json:"access_key_secret"`
-    PublicDomain    string `json:"public_domain"`
+    Endpoint  string `json:"endpoint"`
+    Bucket    string `json:"bucket"`
+    SecretKey string `json:"secret_key"`
 }
 ```
 
-配置校验至少覆盖 Endpoint、Region、Bucket 和凭据。活动驱动的配置必须在保存时验证，不能等第一次上传才报错。
+本例统一使用 `secret_key` 保存供应商凭据。配置校验至少覆盖 Endpoint、Bucket 和凭据；需要 Region 或 Access Key ID 的供应商应按自身协议补充字段。活动驱动的配置必须在保存时验证，不能等第一次上传才报错。
 
 ### 2. 实现基础 Driver
 
@@ -87,13 +91,18 @@ type PresignedUpload struct {
 - 部分供应商使用表单 POST，需要返回 `FormData`。
 - 不支持直传的远程驱动不实现 `DirectUploadCapable`，前端自动走服务端上传。
 
-如果直传完成流程依赖对象大小和 MIME 校验，驱动还必须实现 `StatCapable`。不能信任客户端回传的 Bucket、Object Key、Hash、Size 或 MIME。
+当前直传完成流程会读取对象大小和 MIME，驱动还必须实现 `StatCapable`。不能信任客户端回传的 Bucket、Object Key、Hash、Size 或 MIME。
 
 ### 4. 注册驱动
 
 ```go
 err := filestorage.RegisterDriver(filestorage.DriverDefinition{
     Name: "example",
+    // 本例假设 NewExampleDriver 已实现直传、分片和 Stat 能力。
+    Capabilities: filestorage.DriverCapabilities{
+        DirectUpload:    true,
+        MultipartUpload: true,
+    },
     Build: func(ctx context.Context, config filestorage.Config) (filestorage.Driver, error) {
         var provider ExampleConfig
         if err := config.DecodeProviderConfig("example", &provider); err != nil {
@@ -130,15 +139,11 @@ if err != nil {
 
 `RegisterDriver` 必须在服务开始接收请求前完成，通常由二开模块的初始化代码调用。注册表会拒绝空名称、非法名称、不完整 Definition 和重复 ID，避免后注册实现静默覆盖原驱动。
 
+`Capabilities.DirectUpload`、`MultipartUpload` 和 `ImageThumbnail` 分别与相应可选接口实现保持一致。不支持的能力保留 `false`。如果只实现接口却遗漏注册声明，`storage_direct_driver` / `storage_multipart_driver` 校验会拒绝携带该 `driver` 的直传或分片请求；反过来，只设置为 `true` 而未实现接口也无法完成上传。
+
 为保持既有 `config.local` / `config.aliyun_oss` API 不变，`filestorage.Config` 会把未知顶层键保存在 `Extra` 并按原位置序列化。自定义驱动不需要给公共 `Config` 再加字段，而是定义自己的强类型配置并通过 helper 读写：
 
 ```go
-type ExampleConfig struct {
-    Endpoint  string `json:"endpoint"`
-    Bucket    string `json:"bucket"`
-    SecretKey string `json:"secret_key"`
-}
-
 var provider ExampleConfig
 if err := config.DecodeProviderConfig("example", &provider); err != nil {
     return nil, err
@@ -208,6 +213,12 @@ const unregister = registerStorageProviderForm({
 
 项目当前不提供跨存储自动搬迁。批量迁移需要单独任务、校验 Hash、可重试记录和回滚策略。
 
+## 测试端点与部署边界
+
+存储测试会使用当前表单中的草稿配置，向指定端点实际上传随机命名的测试对象，并尝试删除；测试不是只校验配置格式。存储配置和测试权限应仅授予可信运维人员，使用独立测试 Bucket，避免将未知端点和生产凭据组合用于测试。
+
+合法的内网对象存储端点是受支持的配置。生产部署应通过防火墙、出站代理或网络策略，将服务可访问的存储端点限制在批准的域名或网段，并隔离无关的内部服务和云元数据地址；按实际存储拓扑设置规则，不要一律禁止私网地址。
+
 ## 稳定性要求
 
 - 存储测试对象使用随机 UUID，不能只精确到秒。
@@ -219,6 +230,7 @@ const unregister = registerStorageProviderForm({
 ## 测试清单
 
 - Registry 注册、重复 ID、未知 ID和自定义驱动构建。
+- `Capabilities` 声明与可选接口一致，显式指定自定义 `driver` 的直传和分片参数可通过校验。
 - 活动配置的必填项校验。
 - Secret 新增、替换、掩码保留、空值清除、密文入库和审计脱敏。
 - 直传 PUT/Header/FormData 契约。

@@ -130,7 +130,7 @@ go run main.go -c ./config.yaml command api-route -y
   },
   "name": "Product",
   "path": "/business/product",
-  "component_key": "business/product/index",
+  "component_key": "product:index",
   "is_show": 1,
   "is_auth": 1,
   "status": 1,
@@ -138,7 +138,7 @@ go run main.go -c ./config.yaml command api-route -y
 }
 ```
 
-`api_list` 放 API 表的 ID，不是 URL 字符串。菜单标题的 `title_i18n` 是 Replace 语义：编辑时省略已有语言，相当于删除该语言，所以表单应回填完整多语言后再提交。
+`component_key` 使用前端 `src/router/componentMap.ts` 注册的语义标识，例如 `product:index`；不能直接填写组件文件路径。`api_list` 放 API 表的 ID，不是 URL 字符串。菜单标题的 `title_i18n` 是 Replace 语义：编辑时省略已有语言，相当于删除该语言，所以表单应回填完整多语言后再提交。
 
 ### 第三步：按钮绑定写接口
 

@@ -1,22 +1,24 @@
 {
   "name": "gin-layout-website",
   "private": true,
-  "version": "0.10.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run check:api -- --snapshot-only",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "node --test scripts/*.test.js",
     "check:api": "node scripts/check-api-catalog.js",
     "sync:openapi": "node scripts/sync-openapi-snapshot.js"
   },
   "dependencies": {
-    "dompurify": "^3.4.15",
+    "dompurify": "^3.4.16",
     "marked": "^18.0.13",
-    "vue": "^3.5.32"
+    "prismjs": "^1.30.0",
+    "vue": "^3.5.42"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.6",
-    "vite": "^8.0.10"
+    "vite": "^8.0.16"
   }
 }

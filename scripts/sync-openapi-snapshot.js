@@ -1,22 +1,10 @@
-import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { synchronize, sourceRoots } from './api-contract.js'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const root = path.resolve(__dirname, '..')
-
-const candidates = [
-  process.env.OPENAPI_PATH,
-  path.resolve(__dirname, '../../../go/src/go-layout/docs/openapi.yaml'),
-  path.resolve(__dirname, '../../../../go/src/go-layout/docs/openapi.yaml'),
-].filter(Boolean)
-
-const source = candidates.find((p) => fs.existsSync(p))
-if (!source) {
-  console.error('未找到后端 openapi.yaml。可设置 OPENAPI_PATH 后重试。')
-  process.exit(1)
-}
-
-const dest = path.join(root, 'docs/openapi.snapshot.yaml')
-fs.copyFileSync(source, dest)
-console.log(`✅ 已同步 openapi 快照: ${source} -> ${path.relative(root, dest)}`)
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
+try {
+    if (process.argv.length > 2) throw new Error('Usage: sync-openapi-snapshot.js (set BACKEND_TAG / FRONTEND_TAG to select existing tags)')
+    const source = synchronize({ root, ...sourceRoots(root, true), backendTag: process.env.BACKEND_TAG, frontendTag: process.env.FRONTEND_TAG })
+    console.log(`Synced API ${source.tag} (${source.state}), admin ${source.frontend.tag} (${source.frontend.state}); no website version or tag required.`)
+} catch (error) { console.error(error.message); process.exitCode = 1 }
