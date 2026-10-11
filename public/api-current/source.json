@@ -1,22 +1,22 @@
 {
-  "backendVersion": "0.10.0",
-  "tag": "v0.10.0",
-  "commit": "2a68f65a7a11a1aede777249af3c984f01b9fa0f",
+  "backendVersion": "0.10.1",
+  "tag": "v0.10.1",
+  "commit": "0e18d16a38ca014532d754abf05e9e40fd325e7d",
   "dirty": false,
   "state": "tagged",
-  "ref": "v0.10.0",
+  "ref": "v0.10.1",
   "repository": "https://github.com/wannanbigpig/gin-layout",
   "frontend": {
-    "version": "0.10.0",
-    "tag": "v0.10.0",
-    "commit": "f419016b32769dfce1229e3df5c9e2e4a37e721b",
+    "version": "0.10.1",
+    "tag": "v0.10.1",
+    "commit": "0fbebfd3bc0abe79d526a697cca016337fb92f02",
     "dirty": false,
     "state": "tagged",
-    "ref": "v0.10.0",
+    "ref": "v0.10.1",
     "repository": "https://github.com/wannanbigpig/go-admin-ui",
     "hashes": {
-      "package": "5d327a0a2a6569b97204e96f8b7728f3b5b677123728dd25e972467b69c6783c",
-      "release": "4c79a0ded3c14192928b39aebe2408b57b62166b21f0adcbb79c605402ac380a"
+      "package": "e34645e20b31cec4369aa6fed06b5058ad2a89c680d719a70c119a1275419478",
+      "release": "280d0ef019c0045418b7a5ab04707ec5d067b16c46c4a451375dd0af62e5ca00"
     }
   },
   "compatibility": {
@@ -31,10 +31,10 @@
   },
   "schemaCoverage": "routes-and-security",
   "hashes": {
-    "documentation": "4fbe1366236cb9be008cc1453478c23e2b03a98251adb4499c461b45db47f41d",
-    "openapi": "d138aac146ac594a7504463b2fe9536c2c20b10e955b0a6ca1f56dd2a0b6eb1f",
+    "documentation": "6b1bce9e2037c9d2c5738396f085a0dce7e4ac20cf85f5342d7b4f40458eb822",
+    "openapi": "6bcc11d2fcafdfdcb3f55f566ca4e44ab0f96e517fe5401e14c79e9e3e01b2f4",
     "catalog": "686cd261abdebf71310b63b5acd34c176be8a652a23ce4da613a53dc2eb6eea7",
     "errorCodes": "82169ff7d13601bed9a8d6864ab7a348b37137532b656a9d8202639370754413",
-    "upgradeGuide": "87cd28ffd94b75284c3c1bbba5d9e2418b94cc873890e1e32c3b740687d2682f"
+    "upgradeGuide": "32ad6c3374683eb8b3b01d1da6a80b29fd7f9377ffdc1e96ed3e8ed10fbf5026"
   }
 }
