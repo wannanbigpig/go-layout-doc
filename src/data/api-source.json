@@ -1,10 +1,10 @@
 {
-  "backendVersion": "0.10.2",
-  "tag": "v0.10.2",
-  "commit": "04e4e7c774733054025ddbe52ab9cd8075010d23",
+  "backendVersion": "0.10.3",
+  "tag": "v0.10.3",
+  "commit": "ae206a281e68d06cd66e62d96689de230fcd166b",
   "dirty": false,
   "state": "tagged",
-  "ref": "v0.10.2",
+  "ref": "v0.10.3",
   "repository": "https://github.com/wannanbigpig/gin-layout",
   "frontend": {
     "version": "0.10.1",
@@ -31,10 +31,10 @@
   },
   "schemaCoverage": "routes-and-security",
   "hashes": {
-    "documentation": "31164c269711d5dd02c522966858b0700568b3898e74c52f485ac7c22f2a9bf7",
-    "openapi": "0556d85d415daaaf081a43078fbebd1e5fd85dd33465ca3c326f5f56ca0363d9",
+    "documentation": "b7ddacdbea19628fcc24f858e9acc3a2eb16baa0ac74cfb31c95abd7c9db4cd7",
+    "openapi": "f454ea225fb6842f437d23c0e9007d0346240f7a198b4711d2aeb47243dcb1eb",
     "catalog": "686cd261abdebf71310b63b5acd34c176be8a652a23ce4da613a53dc2eb6eea7",
     "errorCodes": "82169ff7d13601bed9a8d6864ab7a348b37137532b656a9d8202639370754413",
-    "upgradeGuide": "171fb0aaa3ca383b7479631bf584c251b390000646444daac2fada74ee001710"
+    "upgradeGuide": "b09b202e7f229d295995718c23bc5ec3df299d16611f3fe4dc0265095d342846"
   }
 }
